@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+<channel>
+<title>ygxqqx </title>
+<description/>
+<language>zh-cn</language>
+<ttl>5</ttl>
+
+     <item>
+         <title>Golang版结巴中文分词『GoJieba』 </title>
+         <link>http://yanyiwu.com/work/2016/04/18/gojieba.html</link>
+         <guid>http://yanyiwu.com/work/2016/04/18/gojieba</guid>
+         <pubDate>Mon, 18 Apr 2016 00:00:00 +1000</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/GoJieBaLogo-v2.png" class="photo", style="width:80%"></img>
+</center></p>
+
+<h2 id=">前言</h2>
+
+<p>是时候正式写一篇文章专门介绍一下 <a href="https://github.com/yanyiwu/gojieba">GoJieba</a> 了，
+因为之后有打算基于 <a href="https://github.com/yanyiwu/gojieba">GoJieba</a> 对于 nlp / 搜索引擎等领域好好做一些 Go语言的轮子开发。 
+Go语言目前来说，轮子还是偏少。 
+毕竟，轮子越多，社区才能越繁荣。
+也欢迎对此也感兴趣的朋友能联系<a href="http://yanyiwu.com/about.html">我</a>，互通有无。</p>
+
+<p>本文基于 <a href="https://github.com/yanyiwu/gojieba">GoJieba</a> v0.13.0 版本。</p>
+
+<p><a href="https://github.com/yanyiwu/gojieba">GoJieba</a>是&quot;结巴&quot;中文分词的Golang语言版本。</p>
+
+<h2 id=">关键字</h2>
+
+<p>Go(golang), 中文分词, 结巴(Jieba)中文分词, GoJieba </p>
+
+<h2 id=">简介</h2>
+
+<ul>
+<li>支持多种分词方式，包括: 最大概率模式, HMM新词发现模式, 搜索引擎模式, 全模式</li>
+<li>核心算法底层由C++实现，性能高效。</li>
+<li>无缝集成到 <a href="https://github.com/blevesearch/bleve">bleve</a> 到进行搜索引擎的中文分词功能。</li>
+<li>字典路径可配置，NewJieba(&hellip;string), NewExtractor(&hellip;string) 可变形参，当参数为空时使用默认词典(推荐方式)</li>
+</ul>
+
+<h2 id=">用法</h2>
+<div class="highlight"><pre><code class="language-" data-lang="">go get github.com/yanyiwu/gojieba
+</code></pre></div>
+<p>分词示例</p>
+<div class="highlight"><pre><code class="language-" data-lang="">package main
+
+import (
+    "fmt"
+    "strings"
+
+    "github.com/yanyiwu/gojieba"
+)
+
+func main() {
+    var s string
+    var words []string
+    use_hmm := true
+    x := gojieba.NewJieba()
+    defer x.Free()
+
+    s = "我来到北京清华大学"
+    words = x.CutAll(s)
+    fmt.Println(s)
+    fmt.Println("全模式:", strings.Join(words, "/"))
+
+    words = x.Cut(s, use_hmm)
+    fmt.Println(s)
+    fmt.Println("精确模式:", strings.Join(words, "/"))
+
+    s = "他来到了网易杭研大厦"
+    words = x.Cut(s, use_hmm)
+    fmt.Println(s)
+    fmt.Println("新词识别:", strings.Join(words, "/"))
+
+    s = "小明硕士毕业于中国科学院计算所，后在日本京都大学深造"
+    words = x.CutForSearch(s, use_hmm)
+    fmt.Println(s)
+    fmt.Println("搜索引擎模式:", strings.Join(words, "/"))
+
+    s = "长春市长春药店"
+    words = x.Tag(s)
+    fmt.Println(s)
+    fmt.Println("词性标注:", strings.Join(words, ","))
+}
+</code></pre></div>
+<p>运行结果：</p>
+<div class="highlight"><pre><code class="language-" data-lang="">我来到北京清华大学
+全模式: 我/来到/北京/清华/清华大学/华大/大学
+我来到北京清华大学
+精确模式: 我/来到/北京/清华大学
+他来到了网易杭研大厦
+新词识别: 他/来到/了/网易/杭研/大厦
+小明硕士毕业于中国科学院计算所，后在日本京都大学深造
+搜索引擎模式: 小明/硕士/毕业/于/中国/中国科学院/科学/科学院/学院/计算所/，/后/在/日本/日本京都大学/京都/京都大学/大学/深造
+长春市长春药店
+词性标注: 长春市/ns,长春/ns,药店/n
+</code></pre></div>
+<h2 id="bleve">Bleve 中文分词插件用法</h2>
+<div class="highlight"><pre><code class="language-" data-lang="">package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/blevesearch/bleve"
+    "github.com/yanyiwu/gojieba"
+    _ "github.com/yanyiwu/gojieba/bleve"
+)
+
+func Example() {
+    INDEX_DIR := "gojieba.bleve"
+    messages := []struct {
+        Id   string
+        Body string
+    }{
+        {
+            Id:   "1",
+            Body: "你好",
+        },
+        {
+            Id:   "2",
+            Body: "世界",
+        },
+        {
+            Id:   "3",
+            Body: "亲口",
+        },
+        {
+            Id:   "4",
+            Body: "交代",
+        },
+    }
+
+    indexMapping := bleve.NewIndexMapping()
+    os.RemoveAll(INDEX_DIR)
+    // clean index when example finished
+    defer os.RemoveAll(INDEX_DIR)
+
+    err := indexMapping.AddCustomTokenizer("gojieba",
+        map[string]interface{}{
+            "dictpath":     gojieba.DICT_PATH,
+            "hmmpath":      gojieba.HMM_PATH,
+            "userdictpath": gojieba.USER_DICT_PATH,
+            "type":         "gojieba",
+        },
+    )
+    if err != nil {
+        panic(err)
+    }
+    err = indexMapping.AddCustomAnalyzer("gojieba",
+        map[string]interface{}{
+            "type":      "gojieba",
+            "tokenizer": "gojieba",
+        },
+    )
+    if err != nil {
+        panic(err)
+    }
+    indexMapping.DefaultAnalyzer = "gojieba"
+
+    index, err := bleve.New(INDEX_DIR, indexMapping)
+    if err != nil {
+        panic(err)
+    }
+    for _, msg := range messages {
+        if err := index.Index(msg.Id, msg); err != nil {
+            panic(err)
+        }
+    }
+
+    querys := []string{
+        "你好世界",
+        "亲口交代",
+    }
+
+    for _, q := range querys {
+        req := bleve.NewSearchRequest(bleve.NewQueryStringQuery(q))
+        req.Highlight = bleve.NewHighlight()
+        res, err := index.Search(req)
+        if err != nil {
+            panic(err)
+        }
+        fmt.Println(res)
+    }
+}
+
+func main() {
+    Example()
+}
+</code></pre></div>
+<p>运行结果：</p>
+<div class="highlight"><pre><code class="language-" data-lang="">2 matches, showing 1 through 2, took 360.584µs
+    1. 2 (0.423287)
+    Body
+        &lt;mark&gt;世界&lt;/mark&gt;
+    2. 1 (0.423287)
+    Body
+        &lt;mark&gt;你好&lt;/mark&gt;
+
+2 matches, showing 1 through 2, took 131.055µs
+    1. 4 (0.423287)
+    Body
+        &lt;mark&gt;交代&lt;/mark&gt;
+    2. 3 (0.423287)
+    Body
+        &lt;mark&gt;亲口&lt;/mark&gt;
+</code></pre></div>
+<h2 id=">性能评测</h2>
+
+<p><a href="http://yanyiwu.com/work/2015/06/14/jieba-series-performance-test.html">Jieba中文分词系列性能评测</a></p>
+
+<h2 id=">测试</h2>
+
+<p>Unittest</p>
+<div class="highlight"><pre><code class="language-" data-lang="">go test ./...
+</code></pre></div>
+<p>Benchmark</p>
+<div class="highlight"><pre><code class="language-" data-lang="">go test -bench "Jieba" -test.benchtime 10s
+go test -bench "Extractor" -test.benchtime 10s
+</code></pre></div>
+<h2 id=">最后</h2>
+
+<p>不知道这次的雄心壮志是否又会最后变成『挖坑不填』，
+但是，至少也算是起了个头，一年来再回头看看，是否真的有所建树。</p>
+]]></description>
+     </item>
+
+     <item>
+         <title>bleve中文分词插件之gojieba </title>
+         <link>http://yanyiwu.com/work/2016/04/04/bleve-gojieba.html</link>
+         <guid>http://yanyiwu.com/work/2016/04/04/bleve-gojieba</guid>
+         <pubDate>Mon, 04 Apr 2016 00:00:00 +1000</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/bleve-gojieba-logo.png" class="photo", style="width:80%"></img>
+</center></p>
+
+<p>『Go语言开发的搜索引擎<a href="https://github.com/blevesearch/bleve">bleve</a>』  </p>
+
+<p>先安利一个Go语言开发的搜索引擎 <a href="https://github.com/blevesearch/bleve">bleve</a> ，<br>
+目前看来这应该是 Go语言开发的搜索引擎里面最有潜力，<br>
+或者说最不像玩具的搜索引擎。  </p>
+
+<p>简单试用了一下体验还可以，<br>
+并试探性的提了一个关于打版本标签的 issue ，<br>
+作者的回复响应速度也很快。<br>
+网上搜的资料上显示 <a href="https://github.com/blevesearch/bleve">bleve</a> 是由 CouchBase 团队打造出来的。<br>
+但是我比较不理解的是为什么看了一下代码提交的commit ，<br>
+主要都是由作者一个人提交的代码。<br>
+这个比较费解。<br>
+不过Anyway，这个项目对于Go社区来说是个好消息。<br>
+也希望这个项目能发展越来越好，我也已经Watch了 <a href="https://github.com/blevesearch/bleve">bleve</a> ,<br>
+希望之后能有所贡献。  </p>
+
+<p>『转入正题』  </p>
+
+<p>有朋友在 <a href="https://github.com/yanyiwu/gojieba">gojieba</a> 的 issue 里面提到希望把 <a href="https://github.com/yanyiwu/gojieba">gojieba</a> 集成到 <a href="https://github.com/blevesearch/bleve">bleve</a> 中作为中文分词的插件。<br>
+所以趁这个清明假期把 <a href="https://github.com/yanyiwu/gojieba/tree/master/bleve">gojieba/bleve</a> 模块完成了。<br>
+具体的用法非常简单明了，在 <a href="https://github.com/yanyiwu/gojieba">gojieba</a> 的 README.md 里面有说明。  </p>
+
+<p><a href="https://github.com/blevesearch/bleve">bleve</a> 的插件模块支持的很好，很容易就无缝集成进去。<br>
+而且很灵活，主要是两个主要的模块 Tokenizer, Analyzer .<br>
+前者是后者的子集。<br>
+前者负责分词，但是其实搜索引擎分词其实其中的一个重要环节而已。<br>
+去停用词，大小写转换等，分词前分词后，都有不少功夫需要做。<br>
+目前的 <a href="https://github.com/yanyiwu/gojieba/tree/master/bleve">gojieba/bleve</a> 只是最简单的 Analyzer ，<br>
+分词也是使用了最简单的最大概率法，后面应该会改进成 CutForSearch 模式，进行更细粒度的分词提高召回率。<br>
+后续还有很多调优。  </p>
+
+<p>与此同时，也写了一个使用 <a href="https://github.com/blevesearch/bleve">bleve</a> 和 <a href="https://github.com/yanyiwu/gojieba">gojieba</a> 对 jekyll 博文进行索引和搜索的示例代码： <a href="https://github.com/yanyiwu/practice/tree/master/go/bleve/jekyllsearch">blogsearch</a><br>
+很轻松就跑起来了。<br>
+当然目前的代码都很 rush 很粗糙，<br>
+但是或许之后在空闲的时间会针对博客系统做搜索引擎的集成，<br>
+起码在我的博客 <a href="http://yanyiwu.com">yanyiwu.com</a> 里面可以试试。  </p>
+
+<p>『附注』  </p>
+
+<ul>
+<li>本文所述基于 <a href="https://github.com/yanyiwu/gojieba">gojieba</a> v0.12.0 版本<br></li>
+</ul>
+]]></description>
+     </item>
+
+     <item>
+         <title>谈谈Go语言的字符串设计 </title>
+         <link>http://yanyiwu.com/work/2016/04/02/golang-cgo-cstring.html</link>
+         <guid>http://yanyiwu.com/work/2016/04/02/golang-cgo-cstring</guid>
+         <pubDate>Sat, 02 Apr 2016 00:00:00 +1100</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center><br>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/GoJieBaLogo-v2.png" class="photo", style="width:60%"></img><br>
+</center>        </p>
+
+<p>『问题描述』</p>
+
+<p>那天有用户向我反馈在使用 <a href="https://github.com/yanyiwu/gojieba">GoJieba</a> 的过程中发现内存泄露的Bug。
+具体现象就是这个测试代码 <a href="https://github.com/yanyiwu/practice/blob/master/go/gojieba/cstr/test.go">test.go</a> 跑着跑着内存一直增长。 
+刚开始以为是代码里面的C语言部分内存没有正确释放导致的，
+查了很久一直没有找到问题所在。 </p>
+
+<p>最后发现这个Bug非常白痴，是因为 C.CString 使用不当导致的。
+在调用了 C.CString 之后需要手动释放内存。
+这个Bug非常白痴，但是却反映了我之前对Go语言string理解不彻底的隐患。
+才导致在我第一眼看到 C.CString 的时候，
+就下意识的认为这个函数肯定没有动态申请新的内存，
+和 C++ string::c_str() 一样，复用了内存。
+所以也就肯定不需要手动释放。
+当然这些只是『我以为』。</p>
+
+<p>『问题深扒』</p>
+
+<p>C语言和Go语言本是同根生嘛，
+所以Go语言在设计的时候就通过cgo对C语言调用支持得很好。
+而Go语言和C语言之间的数据转换就是通过 C.CString (Go-&gt;C), C.GoString(C-&gt;Go)
+来进行的。</p>
+
+<p>先谈谈 C.GoString ，很显然当使用 C.GoString 的时候，
+会复制C语言的*char指针指向的字符串的内容拷贝到Go语言的string管理的内存空间。
+Go语言的string管理的内存空间有gc管理，不需要用户主动释放内存。
+也就是不需要管它。 </p>
+
+<p>而 C.CString 将 Go语言 string 转换成 C语言字符串的时候。
+我们就要谈谈为什么它不会像 C++ 的 string::c_str() 一样只是单纯的共用内存了。</p>
+
+<p>本质原因在于对于 Go 来说， string 和 C语言最大的不同是:
+在C语言中，字符串是以 &rsquo;\0&rsquo; 结尾。
+其实我认为这个本身是一种历史遗留问题。</p>
+
+<p>『C语言的字符串主要有两种存储方式可选』</p>
+
+<p>比如一个 &ldquo;hello&rdquo; 的字符串。
+我们在内存中表示可以有两种选择：</p>
+
+<p>第一种：</p>
+<div class="highlight"><pre><code class="language-" data-lang="">"hello\0"
+</code></pre></div>
+<p>第二种：</p>
+<div class="highlight"><pre><code class="language-" data-lang="">typedef struct {
+    char* buffer;
+    size_t len;
+} string;
+</code></pre></div>
+<p>C语言默认的字符串选择了第一种方式，
+我认为主要原因在于当年C语言发明的时候是内存和稀缺的时代。
+第一种方式比第二种方式显然更省内存。</p>
+
+<p>但是随着时代的发展，内存越来越便宜。内存已经越来越不是程序开发的瓶颈。
+第二种方式越来越成为字符串设计的首选。
+比如在Nginx之类的著名开源项目中，也是采用了第二种方式对字符串进行存储。</p>
+
+<p>而第二种方式更受青睐的主要原因我认为有两点:</p>
+
+<p>『1. 更好的内存共享』</p>
+
+<p>比如有一个字符串s1 = &ldquo;hello world&rdquo; ，
+而有两种字符串s2 s3 分别是 s1 的子串：&quot;hello&quot;, &ldquo;world&rdquo; .
+当我们使用第二种方式存储字符串的时候，
+我们对于s2 s3就直接复用 s1的内存即可。
+无需动态分配和释放，这样的场景在协议解析，比如HTTP包头的场景下特别常用。</p>
+
+<p>而假设我们使用第一种方式存储字符串的话，
+那么 s1 = &ldquo;hello world\0&rdquo;, s2 = &ldquo;hello\0&rdquo;,
+虽然 s2 是 s1 的子串，但是因为 &ldquo;\0&rdquo; 结尾符的存在，
+s2 就无法复用 s1 的内存，而是需要新申请一段新的内存。
+这也是为什么在Go语言中， C.CString 函数返回的内存肯定是一段新的内存，
+也就不得不要求调用者手动释放。</p>
+
+<p>『2. 性能更高,获取长度不再是strlen这种O(N)时间复杂度的函数』</p>
+
+<p>这点就比较显而易见了。</p>
+
+<p>『最后』</p>
+
+<p>其实Go的文档还是写的很详细的，如下，
+只不过我自己思维惯性导致走入误区，这个锅得我自己背。</p>
+
+<p>在 <a href="https://golang.org/cmd/cgo/">cgo-1</a> 中关于 C.CString 的注释里面已经写的很清楚了。
+需要手动释放，C.CString 返回的指针。</p>
+<div class="highlight"><pre><code class="language-" data-lang="">// Go string to C string
+// The C string is allocated in the C heap using malloc.
+// It is the caller's responsibility to arrange for it to be
+// freed, such as by calling C.free (be sure to include stdlib.h
+// if C.free is needed).
+func C.CString(string) *C.char
+</code></pre></div>
+<p>在 <a href="http://blog.golang.org/c-go-cgo">cgo-2</a> 中有释放 C.CString 返回指针的示例：</p>
+<div class="highlight"><pre><code class="language-" data-lang="">func Print(s string) {
+    cs := C.CString(s)
+    defer C.free(unsafe.Pointer(cs))
+    C.fputs(cs, (*C.FILE)(C.stdout))
+}
+</code></pre></div>]]></description>
+     </item>
+
+     <item>
+         <title>MySQL中文分词插件SqlJieba </title>
+         <link>http://yanyiwu.com/work/2016/03/27/mysql-plugin-sqljieba.html</link>
+         <guid>http://yanyiwu.com/work/2016/03/27/mysql-plugin-sqljieba</guid>
+         <pubDate>Sun, 27 Mar 2016 00:00:00 +1100</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center><br>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/sqljieba.jpg" class="photo", style="width:60%"></img><br>
+</center>        </p>
+
+<p>『关键词』</p>
+
+<p>MySQL, 插件(Plugin), 中文分词, 结巴分词(Jieba), 全文检索(Full-Text), SqlJieba</p>
+
+<p>『需求背景』  </p>
+
+<p>之前也老有人问我啥时候能搞一个MySQL中文分词插件。<br>
+无奈自己对MySQL插件开发实在不熟悉，再加上感觉这种插件的需求量并不大，所以迟迟没有抽出时间开发。<br>
+直到十来天前的 <a href="https://github.com/yanyiwu/cppjieba">cppjieba</a> 一个 <a href="https://github.com/yanyiwu/cppjieba/issues/58">issue-58</a> 把MySQL插件开发的文档和版本都推荐给我了。<br>
+所以那个 <a href="https://github.com/yanyiwu/cppjieba/issues/58">issue-58</a> 成了我铁心要把这个MySQL中文分词插件 Finished 掉的最后一根稻草。<br>
+到今天总算是把 <a href="https://github.com/yanyiwu/sqljieba">SqlJieba</a> 撸出来了。  </p>
+
+<p>『开发体验』  </p>
+
+<p>以前觉得搞一些名牌开源项目的插件开发是一个很日天的技术活。<br>
+但是结合之前搞Nginx中文分词插件 <a href="https://github.com/yanyiwu/ngx_http_cppjieba_module">ngx_http_cppjieba_module</a> 和现在这个MySQL中文分词插件 <a href="https://github.com/yanyiwu/sqljieba">SqlJieba</a> 的经历来看。<br>
+感觉这玩意的工作量倒不是技术难度，而是熟悉程度。<br>
+搞人家项目的插件开发就得熟悉人家项目的文档，给的接口函数，<br>
+还得搭建人家的开发环境，这些说实话挺繁琐的。<br>
+大部分时间都是耗这上面了。<br>
+让我想起在学校做单片机编程的实验的时候，<br>
+搞软件编程是『面向对象编程』；<br>
+搞单片机编程是『面向芯片说明书编程』，看着说明书写代码。  </p>
+
+<p>『欢迎反馈』  </p>
+
+<p>不过 Anyway, 总算撸通了整个插件的开发和安装过程。还是很『一颗赛艇』的。<br>
+So, 具体使用说明之前的也在 <a href="https://github.com/yanyiwu/sqljieba">SqlJieba</a> 的 README.md 里面尽可能详细的阐述了。<br>
+希望对MySQL分词有需求的朋友能试试 <a href="https://github.com/yanyiwu/sqljieba">SqlJieba</a>，欢迎反馈。  </p>
+]]></description>
+     </item>
+
+     <item>
+         <title>放弃screen,拥抱tmux </title>
+         <link>http://yanyiwu.com/work/2016/03/24/from-screen-to-tmux.html</link>
+         <guid>http://yanyiwu.com/work/2016/03/24/from-screen-to-tmux</guid>
+         <pubDate>Thu, 24 Mar 2016 00:00:00 +1100</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center><br>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/firehazard.jpg" class="photo"></img><br>
+</center>        </p>
+
+<p>『故事背景』  </p>
+
+<p>screen/tmux 是远程ssh session的管理工具。<br>
+可以在server端帮你保存工作现场和恢复工作现场。<br>
+最典型的应用场景就是，你每天下班关机器的时候，先保存现场(session)。<br>
+然后第二天上班的时候再登录上去恢复现场(session) ，可以一下子就进入到之前的工作状态，<br>
+比如当时正使用vim编写代码编写到第N行的状态。  </p>
+
+<p>说起screen我是感情很深厚的，从我第一份实习去阿里云开始。<br>
+刚入职的第一天学长（北邮亲学长，对我帮助很大，也算是我生命中遇到的贵人之一）<br>
+传授给我一份screen配置，然后叫我开始养成使用screen在服务器上面开发的习惯。<br>
+screen的配置文件我现在仍然沿用（在一些没有tmux的环境下），在我的<a href="https://github.conf/yanyiwu">GitHub</a>上面的代码 <a href="https://github.com/yanyiwu/etc/blob/master/linux/.screenrc">screenrc</a> 。<br>
+受益良多。  </p>
+
+<p>直到有一天在另一家公司听到同事推荐tmux更强大，<br>
+刚好我又遇到在某台机器上面使用screen死活中文编码有问题的情况。<br>
+就直接切换到tmux了，从screen切换到tmux几乎没有任何学习成本。<br>
+同样也仿照 <a href="https://github.com/yanyiwu/etc/blob/master/linux/.screenrc">screenrc</a> 配置文件的写法，配置了一下 <a href="https://github.com/yanyiwu/etc/blob/master/linux/.tmux.conf">tmuxconf</a> 。<br>
+然后就用得飞起了，同时也解决了中文编码显示的问题。<br>
+沿用至今。  </p>
+
+<p>『东窗事发』  </p>
+
+<p>最近刚好一直在做上线前的联调测试各种跑测试。<br>
+然后同事发现自己那部分的server在测试的时候会莫名其妙的hang住了。<br>
+以前没有遇到过的，以为是新增加的逻辑导致的死锁之类的故障。<br>
+后来发现是screen的锅。</p>
+
+<p>『Bug复现』  </p>
+
+<p>同事使用的就是在 screen 里面启动的服务，输出的日志没有重定向到文件。<br>
+一些最简化的复现场景如下：<br>
+比如ssh到远程的服务器上，在screen某一个窗口下运行如下的shell脚本  </p>
+<div class="highlight"><pre><code class="language-" data-lang="">while (true)  
+do  
+    echo "github.com/yanyiwu"  
+done  
+</code></pre></div>
+<p>然后把本地机器的网线拔掉。<br>
+然后等连接都断开之后，再把网线插上，再登录上去。<br>
+会发现当时那个 screen session 的状态还是 Attached ，而不是正常的 Detached .<br>
+然后再试图通过如下命令  </p>
+<div class="highlight"><pre><code class="language-" data-lang="">screen -d -r &lt;session-name&gt;  
+</code></pre></div>
+<p>已经无法重新恢复session了。<br>
+在我们的测试中也就是表现为那个服务无法正常接收请求了。  </p>
+
+<p>但是如果是在 tmux 中做同样的事情的话。<br>
+就不会有hang住的问题，一切正常运行。<br>
+也就不会出现最开始以为是服务代码问题的恐慌了。  </p>
+
+<p>『最后』  </p>
+
+<p>好吧有点标题党了，其实tmux还有其他一些不错的功能比screen好的。<br>
+毕竟tmux是screen的增强版。<br>
+虽然本文其实就是一次screen踩坑记录而已。<br>
+但是我觉得还是有必要宣传一下tmux的，所以就把标题起得比较浮夸了。  </p>
+
+<p>『题图』</p>
+
+<p>还有就是配图是今天，准确的来说应该是昨天：
+2016年3月23日，中关村南大街寰太大厦二楼一家饭店着火的图。<br>
+当时我刚好就在15楼上班。<br>
+狂奔下楼，所幸无任何人员伤亡。  </p>
+]]></description>
+     </item>
+
+     <item>
+         <title>技术圈的粉丝经济 </title>
+         <link>http://yanyiwu.com/work/2016/03/13/fans-economy.html</link>
+         <guid>http://yanyiwu.com/work/2016/03/13/fans-economy</guid>
+         <pubDate>Sun, 13 Mar 2016 00:00:00 +1100</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center><br>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/money.jpg" class="photo"></img><br>
+</center>        </p>
+
+<p>其实这个是前几天的话题了，但是也算是个很有意思的现象，值得记录。  </p>
+
+<p>最近一连串的技术全粉丝经济变现，
+是从最开始流传开的是阮一峰发的微博说起：  </p>
+
+<blockquote>
+<p>池建强老师搞了一个收费群，入会费1024元，现在已有680个会员了，搞得我都心动了。大家怎么看，要是我也建一个互联网技术讨论群，每个工作日分享一篇技术文章，也是这个价格，有人愿意付费参加吗？  </p>
+</blockquote>
+
+<p>到最近的真阿当收徒弟，一个人报名费一万元人民币。<br>
+详情见『<a href="https://www.zhihu.com/question/41112707">怎么评价真阿当的前端收费收徒计划？</a>』<br>
+这个名声变现的事情已经发酵。  </p>
+
+<p>让我想起刚开始玩微博不久的时候，
+我记得子柳（淘宝出身，人称校长，以前微博上很活跃，最近鲜有发微博了。）
+那个时候经常在微博上帮熟人朋友的公司内推员工的。<br>
+因为子柳的名气积累，导致子柳的粉丝中高端程序员不少。<br>
+所以每次子柳发一些内推招聘，效果总是不错。<br>
+关于内推成功的回报，他大概说过，理论上来讲。<br>
+可以获得很丰富的回报。<br>
+但是他知道，如果一旦他是为了图回报去专门帮别人招聘，<br>
+很快，公司和候选人都会慢慢离他而去。  </p>
+
+<p>很多人都明白，自媒体是可以变现的。<br>
+技术圈的人粉丝数还可以的，一般也都算不上自媒体。<br>
+变现能力有限。  </p>
+
+<p>像这种入会费和收徒弟的变现方式，<br>
+毫无疑问变现能力不错。  </p>
+
+<p>但是现在再回想一下子柳说的那些话。<br>
+其实变现也是有风险的。<br>
+只能说，祝搞收费群的，收徒弟的，都能管理的不错吧。<br>
+罗辑思维之前也搞会员，刚开始逼格不错。<br>
+后来被骂成狗了。<br>
+管理得好，稳定变现，名利双收。<br>
+管理得不好，让那些付费进去的人，得不到他们想要的东西。<br>
+那骂起来，会比那些不付费的粉丝，凶得多。   </p>
+]]></description>
+     </item>
+
+     <item>
+         <title>和吵架专家学营销 </title>
+         <link>http://yanyiwu.com/work/2016/02/27/quarrel-is-marketing.html</link>
+         <guid>http://yanyiwu.com/work/2016/02/27/quarrel-is-marketing</guid>
+         <pubDate>Sat, 27 Feb 2016 00:00:00 +1100</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center><br>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/quarrel.jpg" class="photo"></img><br>
+</center>      </p>
+
+<p>『PHP是世界上最好的语言』  </p>
+
+<blockquote>
+<p>某女：你能让这个论坛的人都吵起来，我就跟你吃饭。<br>
+PHP程序员：PHP是世界上最好的语言！<br>
+某论坛炸锅了，各种吵架……<br>
+某女：服了你了，我们走吧！<br>
+PHP程序员：今天不行，我一定要说服他们，PHP必须是最好的语言。  </p>
+</blockquote>
+
+<p>这句话最初是当成笑话段子被创作出来。<br>
+但是却成了编程语言史上最好的营销段子之一，可能没有之一。<br>
+甚至营销到连很多不懂编程语言的人，<br>
+听到 PHP，也会肃然起敬地问一句：『你们是在说那个世界上最好的语言吗？』。  </p>
+
+<p>『Python凑合可以用在不重要的地方，Ruby是垃圾，JavaScript是垃圾中的垃圾。』  </p>
+
+<p>在互联网技术圈的营销现象，王垠应该是是当仁不让的顶级营销专家。<br>
+从最早的成名作 『<a href="http://www.douban.com/group/topic/12121637/">王垠：完全用Linux工作</a>』<br>
+开始，因为捧 Linux ，喷 Windows 而出名，也因此这篇文章被转发到了天涯海角。<br>
+大众最喜欢看这种非黑即白的往死里骂的文章。<br>
+营销效果堪称一绝。  </p>
+
+<p>之后几乎王垠的每一篇流传较广的文章里面，<br>
+都可以看出浓浓的捧杀相间的营销风。<br>
+屡试不爽，弹无虚发。<br>
+王垠是聪明人，比如最新的 『<a href="http://www.yinwang.org/blog-cn/2016/01/18/java">给Java说句公道话</a>』，也是典型著作之一。<br>
+那句最大争议的『Python凑合可以用在不重要的地方，Ruby是垃圾，JavaScript是垃圾中的垃圾。』<br>
+几乎成了新的王垠经典语录段子之一。  </p>
+
+<p>Ruby和JavaScript是否那么垃圾也不是王垠关心的事情，<br>
+再说了，一门语言的成就根本无法光从语言本身设计水平来估量。<br>
+就像很多搞C的人喷PHP是垃圾，但是人家扎克伯克用PHP搞出了FaceBook。<br>
+你用C语言搞一个Facebook出来试试？<br>
+术业有专供，没人会用PHP去写一个操作系统，<br>
+C语言再牛也没有做到像JavaScript那样做到让现在所有浏览器都支持它。  </p>
+
+<p>但是这些真相没人会Care，<br>
+别人关注的，就是吵架本身带来的喜感而已。<br>
+就像泼妇骂街，再儒雅的绅士路过的时候也会忍不住多观望几眼。<br>
+这也是为什么微博上面的人吵架，吵得越厉害就越涨粉的原因。<br>
+大家的生活都很枯燥，难得有一些精彩的吵架可以调节一下生活。<br>
+关注一下有啥不好的呢。  </p>
+
+<p>看客并不是不知道真相，只是他们可以选择性地获得可以引用来攻击别人或者引起话题的段子。<br>
+比如当一个前端群里面正讨论JavaScript技术问题的时候。<br>
+他们就可以扔进去一句『王垠说过：Ruby是垃圾，JavaScript是垃圾中的垃圾』<br>
+就可以让群一下子就沸腾了，好不快活！  </p>
+
+<p>当然也有很傻很天真的人，会很在意这些吵架。<br>
+仿佛吵架哪一方输了就彻底会身败名裂遗臭万年一样。<br>
+然后就很义愤填膺的参与其中，屏幕为刀键盘为盾，<br>
+浪费大量的时候纠缠不休。  </p>
+
+<p>之前的那个什么『上海女跟男友回家吃了一顿饭然后想分手』的文章。<br>
+还没被疯转之前我就看到了。<br>
+目测又是一场互联网键盘侠盛宴，后来果然如此。<br>
+最后大家才发现，原来是某论坛编造的假新闻骗流量的。<br>
+现实就是如此的奇葩。  </p>
+
+<p>『前端界的营销能力毫无疑问是技术圈冠军』  </p>
+
+<p>包括年前年后为了前端界的无休无止的无聊争吵，<br>
+让很多人看的津津有味。<br>
+其实明眼人都心知肚明，营销而已。<br>
+对错根本不重要，而且很多话题根本就没有绝对的对错。<br>
+最后连其中吵架一方都坦白说吵这么多天其实就想吸引关注，<br>
+然后发布招人信息求简历。  </p>
+
+<p>再回头看看那些微博上的大V，好像几乎每个人都是吵架专家。<br>
+再看看关注的那些很安静的技术大牛，粉丝数却经常寥寥无几。<br>
+这就是互联网时代的典型现象。<br>
+酒香不怕巷子深 这句话在互联网界很难成立。  </p>
+
+<p>如果看明白了这些道理之后，其实很多事情就不会那么令人费解了。<br>
+包括为什么从阿里离职的某大V为何喜欢喷阿里为乐？  </p>
+
+<p>『商人无利不起早，演员无绯闻不成名，互联网无营销不成文』。  </p>
+
+<p>包括<a href="http://yanyiwu.com/work/2016/02/27/quarrel-is-marketing.html">本文</a>，营销含量占比目测也高达 30% 。  </p>
+
+<p>『后记』  </p>
+
+<p>刚写完准备发布的时候，楼下的一男一女好像是为了停车的事情吵得面红耳赤。<br>
+在网上耳濡目染了那么久营销的假吵现象之后，<br>
+楼下的吵架显得格外的纯正，就好像夏日里的一股清风。。。  </p>
+]]></description>
+     </item>
+
+     <item>
+         <title>Seaweedfs之Volume读请求重定向 </title>
+         <link>http://yanyiwu.com/work/2016/02/25/seaweedfs-volume-redirect.html</link>
+         <guid>http://yanyiwu.com/work/2016/02/25/seaweedfs-volume-redirect</guid>
+         <pubDate>Thu, 25 Feb 2016 00:00:00 +1100</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center><br>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/seaweedfs.png" class="photo" style="width:60%"></img><br>
+</center>    </p>
+
+<p>『场景展现』</p>
+
+<p>启动一个 weed master 服务。</p>
+<div class="highlight"><pre><code class="language-" data-lang="">weed master -mdir="/tmp/mdata" -defaultReplication="000"
+</code></pre></div>
+<p>启动两个 weed volume 服务。</p>
+<div class="highlight"><pre><code class="language-" data-lang="">weed volume -dir=/tmp/vol1/ -mserver="127.0.0.1:9333" -port=8080
+weed volume -dir=/tmp/vol2/ -mserver="127.0.0.1:9333" -port=8081
+</code></pre></div>
+<p>上传一个文件</p>
+<div class="highlight"><pre><code class="language-" data-lang="">curl -F "file=1234" "http://127.0.0.1:9333/submit"
+{"fid":"4,01146873ae","fileName":"","fileUrl":"127.0.0.1:8081/4,01146873ae","size":4}
+</code></pre></div>
+<p>通过返回的 fileUrl 可以正常访问到。</p>
+<div class="highlight"><pre><code class="language-" data-lang="">curl 127.0.0.1:8081/4,01146873ae
+1234
+</code></pre></div>
+<p>但是当我们用同一个fid去请求另一台机器的时候，会获取到一个 HTTP 302 Moved Permanently 的结果。</p>
+<div class="highlight"><pre><code class="language-" data-lang="">curl -v 127.0.0.1:8080/4,01146873ae
+
+...
+
+&lt; HTTP/1.1 301 Moved Permanently
+&lt; Location: http://127.0.0.1:8081/4,01146873ae
+&lt; Date: Wed, 24 Feb 2016 16:21:49 GMT
+&lt; Content-Length: 69
+&lt; Content-Type: text/html; charset=utf-8
+&lt;
+&lt;a href="http://127.0.0.1:8081/4,01146873ae"&gt;Moved Permanently&lt;/a&gt;.
+</code></pre></div>
+<p>『实现原理』</p>
+
+<p>根据源码验证了一下，<br>
+原理在于 volume 本身缓存着 volumeId 到 Localtion（也就是VolumeServer的url地址）的键值对，<br>
+根据 volumeId 可以得知应该重定向到哪台 VolumeServer。<br>
+缓存时间目前是代码里面写死的10分钟，缓存过期后再去从 MasterServer 获取，  </p>
+
+<p>所以这个重定向的功能当 MasterServer 挂掉的时候是无法实现的。即使 VolumeServer 都还存活。<br>
+所以之前可能很多人认为 MasterServer 只和上传文件，也就是文件的写操作有关，<br>
+和读操作没有任何关系。但是像这个Redirect的事情，就需要借助 MasterServer 实现。  </p>
+
+<p>本身这部分实现原理没有太多高深的技术，<br>
+只算是阅读源码验证一下实现思路吧，<br>
+简单有效的实现方式就挺好的。</p>
+]]></description>
+     </item>
+
+     <item>
+         <title>白驹过隙，马不停蹄 </title>
+         <link>http://yanyiwu.com/life/2016/02/16/time-flies.html</link>
+         <guid>http://yanyiwu.com/life/2016/02/16/time-flies</guid>
+         <pubDate>Tue, 16 Feb 2016 00:00:00 +1100</pubDate>
+         <author><![CDATA[YanyiWu]]></author>
+         <description><![CDATA[<p><center><br>
+<img src="http://7viirv.com1.z0.glb.clouddn.com/married.jpg" class="photo"></img><br>
+</center>    </p>
+
+<p>今天刚从家乡返回北京。<br>
+从来没有一次返京从今年这次这么匆忙。  </p>
+
+<p>已经连续4天马不停蹄。<br>
+去厦门看楼盘，砸锅卖铁付了首付，按揭三十年，办结婚证，去福州赶回京的高铁。<br>
+短短四天就变成了一个背负三十年房贷的已婚房奴。  </p>
+
+<p>没办法，形势所迫，<br>
+关注了一年多的厦门房事，涨得还算是比较快的。<br>
+不得不赶在返京之前赶紧出手，不然怕明年回来已经买不起了。  </p>
+
+<p>然后买完房子，发现结婚证也从去年的8块钱涨到现在的9块钱了。<br>
+所以也不得不赶在返京之前赶紧办理了，不然怕明年回来也涨得办不起了。  </p>
+
+<p>直到现在坐在沙发上，<br>
+才总算是松了一口气，<br>
+紧绷了好几天的神经，也总算可以放松放松了。  </p>
+
+<p>才想起今天其实是我的阳历生日，<br>
+重新看了一遍以前写过的一篇『<a href="http://yanyiwu.com/life/2011/02/15/shun.html">顺</a>』，<br>
+是自己写的比较满意的春节生活记叙文。  </p>
+
+<p>仔细一看发现已经5年过去了。<br>
+不知道5年后的生日，又会是如何一番景象。  </p>
+
+<p>每年回家都觉得时光飞逝，<br>
+特别是去年9月份岳母查出了不好的疾病，<br>
+让我内心触动很大。<br>
+时光飞逝如同白驹过隙，只能更加努力，<br>
+努力让自己进步的速度赶上父母老去的速度。<br>
+所幸岳母目前治疗一切顺利，一定会平平安安。  </p>
+
+<p>最后，祝自己生日快乐。<br>
+也希望每一年的自己，都能无愧于流逝的时光。  </p>
+]]></description>
+     </item>
+
+</channel>
+</rss>
