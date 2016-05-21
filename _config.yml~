@@ -1,10 +1,11 @@
 name: ygxqqx
-markdown: redcarpet
-#highlighter: pygments
+markdown: kramdown
+highlighter: rouge
+gems: [jekyll-paginate]
 redcarpet:
  extensions: ["smart", "tables", "no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "with_toc_data"]
  render_options:
 author: ygxqqx
 author_email: ygxqqx@163.com
 safe: false
-url: http://yanyiwu.com
+url: 
