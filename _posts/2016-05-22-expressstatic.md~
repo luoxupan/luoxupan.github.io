@@ -10,7 +10,7 @@ category: work
 
 将静态资源文件所在的目录作为参数传递给 express.static 中间件就可以提供静态资源文件的访问了。
 
-假设在 public 目录放置了图片html文件，就可以:
+- 假设在 public 目录放置了图片html文件，就可以:
 
 ```
 app.use(express.static('public'));
@@ -51,6 +51,14 @@ app.use('/static', express.static(__dirname + '/public'));
     </div>
 	<input type="submit" value="Submit"></input>
 </form>
+```
+
+```
+app.post('/userlogin', function(req, res){    
+    
+    //对得到的数据，进行一系列处理，
+});
+
 ```
 
 
