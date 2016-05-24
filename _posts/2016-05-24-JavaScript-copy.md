@@ -18,7 +18,7 @@ for (var i = 0; i < 100; ++i) {
 }
 var samenums = nums;
 nums[0] = 400;
-print(samenums[0]); // 显示400
+console.log(samenums[0]); // 显示400
 ```
 
 这种行为被称为浅复制,新数组依然指向原来的数组。一个更好的方案是使用深复制,
@@ -42,7 +42,7 @@ for (var i = 0; i < 100; ++i) {
 var samenums = [];
 copy(nums, samenums);
 nums[0] = 400;
-print(samenums[0]); // 显示 1
+console.log(samenums[0]); // 显示 1
 
 ```
 

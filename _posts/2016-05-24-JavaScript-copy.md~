@@ -23,6 +23,7 @@ print(samenums[0]); // 显示400
 
 这种行为被称为浅复制,新数组依然指向原来的数组。一个更好的方案是使用深复制,
 将原数组中的每一个元素都复制一份到新数组中。可以写一个深复制函数来做这件事：
+
 ```
 function copy(arr1, arr2) {
 	for (var i = 0; i < arr1.length; ++i) {
@@ -32,6 +33,7 @@ function copy(arr1, arr2) {
 ```
 
 这样,下述代码片段的输出就和我们希望的一样了：
+
 ```
 var nums = [];
 for (var i = 0; i < 100; ++i) {
@@ -40,7 +42,7 @@ for (var i = 0; i < 100; ++i) {
 var samenums = [];
 copy(nums, samenums);
 nums[0] = 400;
-print(samenums[0]); // 显示 1
+console.log(samenums[0]); // 显示 1
 
 ```
 
