@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+    <head>
+        <meta charset="utf-8">
+        <meta property="wb:webmaster" content="f97b0cc1aaecb801" />
+
+        <!-- 百度站内搜索 -->
+        <meta name="baidu-site-verification" content="VYH77GDc5e" />
+        <!-- 百度站内搜索 -->
+
+        <title>epoll 用法示例</title>
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1" />-->
+        <!--<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />-->
+
+        <link rel="stylesheet" href="/css/highlight7.1.default.min.css">
+        <script src="/js/highlight7.1.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+
+        <link rel="stylesheet" href="/css/style.css">
+
+        <!--
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-49284793-2', 'yanyiwu.com');
+          ga('send', 'pageview');
+
+        </script>
+        -->
+
+        <!-- picture -->
+        <!--
+        <script type="text/javascript" src="/js/pic.js"> </script>
+        -->
+
+        <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li onclick="location.href='/'">首页</li>
+                <li onclick="location.href='/moment.html'">时间线</li>
+                <li onclick="location.href='#'">发现</li>
+                <li onclick="location.href='/about.html'">关于</li>
+            </ul>
+        </nav> 
+        <div class="blog_index">
+
+            <div>
+                <div>
+<h1 class="post_title">
+    epoll 用法示例
+</h1>
+
+<div class="post_date">
+    30 Jul 2016
+</div>
+
+<div class="blog_post">
+    <p>最近在网上看到了一篇写的不错的epoll的代码示例</p>
+
+<h2 id="section">代码</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/epoll.h&gt;
+#include &lt;errno.h&gt;
+
+#define MAXEVENTS 64
+
+static int
+make_socket_non_blocking(int sfd) {
+  int flags, s;
+
+  flags = fcntl(sfd, F_GETFL, 0);
+  if (flags == -1) {
+      perror ("fcntl");
+      return -1;
+    }
+
+  flags |= O_NONBLOCK;
+  s = fcntl(sfd, F_SETFL, flags);
+  if (s == -1) {
+      perror ("fcntl");
+      return -1;
+    }
+
+  return 0;
+}
+
+static int
+create_and_bind (char *port) {
+  struct addrinfo hints;
+  struct addrinfo *result, *rp;
+  int s, sfd;
+
+  memset (&amp;hints, 0, sizeof (struct addrinfo));
+  hints.ai_family = AF_UNSPEC;     /* Return IPv4 and IPv6 choices */
+  hints.ai_socktype = SOCK_STREAM; /* We want a TCP socket */
+  hints.ai_flags = AI_PASSIVE;     /* All interfaces */
+
+  s = getaddrinfo(NULL, port, &amp;hints, &amp;result);
+  if (s != 0) {
+      fprintf(stderr, "getaddrinfo: %s\n", gai_strerror (s));
+      return -1;
+    }
+
+  for (rp = result; rp != NULL; rp = rp-&gt;ai_next) {
+      sfd = socket(rp-&gt;ai_family, rp-&gt;ai_socktype, rp-&gt;ai_protocol);
+      if (sfd == -1)
+        continue;
+
+      s = bind(sfd, rp-&gt;ai_addr, rp-&gt;ai_addrlen);
+      if (s == 0) {
+          /* We managed to bind successfully! */
+          break;
+        }
+
+      close(sfd);
+    }
+
+  if (rp == NULL) {
+      fprintf(stderr, "Could not bind\n");
+      return -1;
+    }
+
+  freeaddrinfo(result);
+
+  return sfd;
+}
+
+
+int
+main(int argc, char *argv[]) {
+  int sfd, s;
+  int efd;
+  struct epoll_event event;
+  struct epoll_event *events;
+
+  if (argc != 2) {
+      fprintf(stderr, "Usage: %s [port]\n", argv[0]);
+      exit(EXIT_FAILURE);
+    }
+
+  sfd = create_and_bind(argv[1]);
+  if (sfd == -1)
+    abort();
+
+  s = make_socket_non_blocking(sfd);
+  if (s == -1)
+    abort();
+
+  s = listen(sfd, SOMAXCONN);
+  if (s == -1) {
+      perror("listen");
+      abort();
+    }
+
+  efd = epoll_create1(0);
+  if (efd == -1) {
+      perror("epoll_create");
+      abort();
+    }
+
+  event.data.fd = sfd;
+  event.events = EPOLLIN | EPOLLET;
+  s = epoll_ctl(efd, EPOLL_CTL_ADD, sfd, &amp;event);
+  if (s == -1) {
+      perror("epoll_ctl");
+      abort();
+    }
+
+  /* Buffer where events are returned */
+  events = calloc(MAXEVENTS, sizeof event);
+
+  /* The event loop */
+  while (1) {
+      int n, i;
+
+      n = epoll_wait(efd, events, MAXEVENTS, -1);
+      for (i = 0; i &lt; n; i++) {
+          if ((events[i].events &amp; EPOLLERR) ||
+                    (events[i].events &amp; EPOLLHUP) ||
+                    (!(events[i].events &amp; EPOLLIN))) {
+              /* An error has occured on this fd, or the socket is not
+                 ready for reading (why were we notified then?) */
+        fprintf (stderr, "epoll error\n");
+        close (events[i].data.fd);
+          continue;
+      } else if (sfd == events[i].data.fd) {
+              /* We have a notification on the listening socket, which
+                 means one or more incoming connections. */
+              while (1) {
+                  struct sockaddr in_addr;
+                  socklen_t in_len;
+                  int infd;
+                  char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
+
+                  in_len = sizeof in_addr;
+                  infd = accept(sfd, &amp;in_addr, &amp;in_len);
+                  if (infd == -1) {
+                      if ((errno == EAGAIN) ||
+                          (errno == EWOULDBLOCK)){
+                          /* We have processed all incoming
+                             connections. */
+                          break;
+                        } else{
+                          perror("accept");
+                          break;
+                        }
+                    }
+
+                  s = getnameinfo(&amp;in_addr, in_len,
+                                   hbuf, sizeof hbuf,
+                                   sbuf, sizeof sbuf,
+                                   NI_NUMERICHOST | NI_NUMERICSERV);
+                  if (s == 0) {
+                      printf("Accepted connection on descriptor %d "
+                             "(host=%s, port=%s)\n", infd, hbuf, sbuf);
+                    }
+
+                  /* Make the incoming socket non-blocking and add it to the
+                     list of fds to monitor. */
+                  s = make_socket_non_blocking(infd);
+                  if (s == -1)
+                    abort();
+
+                  event.data.fd = infd;
+                  event.events = EPOLLIN | EPOLLET;
+                  s = epoll_ctl(efd, EPOLL_CTL_ADD, infd, &amp;event);
+                  if (s == -1) {
+                      perror("epoll_ctl");
+                      abort();
+                    }
+                }
+              continue;
+            } else{
+              /* We have data on the fd waiting to be read. Read and
+                 display it. We must read whatever data is available
+                 completely, as we are running in edge-triggered mode
+                 and won't get a notification again for the same
+                 data. */
+              int done = 0;
+
+              while (1) {
+                  ssize_t count;
+                  char buf[512];
+
+                  count = read (events[i].data.fd, buf, sizeof buf);
+                  if (count == -1){
+                      /* If errno == EAGAIN, that means we have read all
+                         data. So go back to the main loop. */
+                      if (errno != EAGAIN){
+                          perror ("read");
+                          done = 1;
+                        }
+                      break;
+                    }
+                  else if (count == 0){
+                      /* End of file. The remote has closed the
+                         connection. */
+                      done = 1;
+                      break;
+                    }
+
+                  /* Write the buffer to standard output */
+                  s = write (1, buf, count);
+                  if (s == -1){
+                      perror ("write");
+                      abort ();
+                    }
+                }
+
+              if (done){
+                  printf ("Closed connection on descriptor %d\n",
+                          events[i].data.fd);
+
+                  /* Closing the descriptor will make epoll remove it
+                     from the set of descriptors which are monitored. */
+                  close (events[i].data.fd);
+                }
+            }
+        }
+    }
+
+
+  free (events);
+  close (sfd);
+  return EXIT_SUCCESS;
+}
+
+
+</code></pre>
+</div>
+
+
+
+<!--<p>转载请注明出处: <a href="/work/2016/07/30/epoll.html">epoll 用法示例</a></p>!-->
+</div>
+
+</div>
+
+<!-- <div class="review">
+
+<!-- 百度分享按钮 start -->
+<!--
+<div class="bdsharebuttonbox">
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a href="#" class="bds_more" data-cmd="more"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"24"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+-->
+<!-- 百度分享按钮 end -->
+
+
+<!-- 微博分享按钮 start -->
+<!--
+<wb:share-button addition="simple" type="button" ralateUid="1644441707"></wb:share-button>
+-->
+
+<!-- 多说评论框 start
+<div class="ds-thread" data-thread-key="/work/2016/07/30/epoll" data-title="epoll 用法示例" data-url="yanyiwu.com/work/2016/07/30/epoll.html">
+</div>
+<!-- 多说评论框 end 
+<!-- 多说公共JS代码 start (一个网页只需插入一次)
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"yanyiwu"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end 
+
+
+</div> -->
+
+
+
+            </div>
+        </div>
+        
+        <footer id="footer">
+            <p>
+                <!--<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1253065108'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1253065108' type='text/javascript'%3E%3C/script%3E"));</script> -->
+                
+            </p>
+        </footer>
+    </body>
+</html>
