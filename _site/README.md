@@ -7,7 +7,7 @@
 + Redcaepet `gem install redcarpet` 
 
 > - 模板 [yanyiwu]
-> - 
+> - 启动jekyll serve
 
 
 

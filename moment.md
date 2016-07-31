@@ -5,7 +5,7 @@ title: 时间线
 
 &raquo;2016-05-30
 
->http://gitref.justjavac.com/
+>[GIT](http://gitref.justjavac.com/)
 
 &raquo; 2016-05-23 15:51
 
