@@ -16,8 +16,9 @@ title: 关于我
 
 &raquo;『开发语言』
 
-> 目前工作需要的是JavaScript/Node.js  
-> 略懂HTML/CSS;  
+> 目前工作需要的是Linux C后台的网络编程   
+> 实习期间接触过node.js   
+> 略懂HTML/CSS  
 
 
 

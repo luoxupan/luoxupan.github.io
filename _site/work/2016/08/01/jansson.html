@@ -8,7 +8,7 @@
         <meta name="baidu-site-verification" content="VYH77GDc5e" />
         <!-- 百度站内搜索 -->
 
-        <title>关于我</title>
+        <title>一个不错的开源json解析库</title>
         <!--<meta name="viewport" content="width=device-width, initial-scale=1" />-->
         <!--<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />-->
 
@@ -53,32 +53,107 @@
             <div>
                 <div>
 <h1 class="post_title">
-    关于我
+    一个不错的开源json解析库
 </h1>
 
+<div class="post_date">
+    01 Aug 2016
+</div>
+
 <div class="blog_post">
-    <p>»『个人简介』</p>
+    <h2 id="json">最近工作中接触到一个很好用的json数据解析库</h2>
 
-<blockquote>
-  <p>男 计算机专业 目前从事软件开发工作<br />
-喜欢写代码，喜欢「开源」</p>
-</blockquote>
+<h3 id="jansson"><a href="">jansson</a></h3>
 
-<p>»『社交资料』</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;jansson.h&gt;
 
-<blockquote>
-  <p><a href="http://github.com">GitHub</a></p>
-</blockquote>
+// gcc json_parse_test.c -omain -ljansson
 
-<p>»『开发语言』</p>
+bool json_get_string(char **buf, const json_t *val, const char *str) {
 
-<blockquote>
-  <p>目前工作是Linux C后台的网络编程 <br />
-实习期间接触过node.js <br />
-略懂HTML/CSS</p>
-</blockquote>
+    bool ret = false;;
+    const char *ptr = NULL;
+    json_t *root;
+    root = json_object_get(val, str);
+    if (!root) {
+        return false;
+    }
+    if (json_is_string(root)) {
+        ptr = json_string_value(root);
+        *buf = strdup(ptr);
+    } else {
+        printf("%s: is not a string\n", str);
+        goto out;
+    }
+    ret = true;
+out:
+    return ret;
+}
+
+bool json_get_int(int *stor, json_t *val, const char *ptr) {
+
+    json_t *entry = json_object_get(val, ptr);
+    bool ret = false;
+    if (!entry) {
+        printf("entry is null\n");
+        goto out;
+    }
+    if (!json_is_integer(entry)) {
+        goto out;
+    }
+    *stor = json_integer_value(entry);
+    ret = true;
+
+out:
+    return ret;
+}
+
+int main(int argc, char *argv[]) {
+
+    json_t *root, *arr_val;
+    int arr_size;
+    json_error_t error;
+
+    root = json_load_file("json_test.conf", 0, &amp;error);
+
+    if (!root) {
+        perror("load file error");
+        return -1;
+    }
+
+    arr_val = json_object_get(root, "btcd");
+
+    if (arr_val &amp;&amp; json_is_array(arr_val)) {
+        arr_size = json_array_size(arr_val);
+        if (arr_size &gt; 0) {
+
+            json_t *val;
+            char *buf = NULL;
+            printf("btcd arr size is: %d\n", arr_size);
+            val = json_array_get(arr_val, 0);
+            json_get_string(&amp;buf, val, "url");
+            printf("url is: %s\n", buf);
+        }
+    }
+    int blockpoll;
+    json_get_int(&amp;blockpoll, root, "blockpoll");
+    printf("%d\n", blockpoll);
+
+    return 0;
+}
 
 
+
+</code></pre>
+</div>
+
+
+
+<!--<p>转载请注明出处: <a href="/work/2016/08/01/jansson.html">一个不错的开源json解析库</a></p>!-->
 </div>
 
 </div>
@@ -103,7 +178,7 @@
 -->
 
 <!-- 多说评论框 start
-<div class="ds-thread" data-thread-key="" data-title="关于我" data-url="yanyiwu.com/about.html">
+<div class="ds-thread" data-thread-key="/work/2016/08/01/jansson" data-title="一个不错的开源json解析库" data-url="yanyiwu.com/work/2016/08/01/jansson.html">
 </div>
 <!-- 多说评论框 end 
 <!-- 多说公共JS代码 start (一个网页只需插入一次)
