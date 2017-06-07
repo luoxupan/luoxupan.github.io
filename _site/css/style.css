@@ -259,7 +259,7 @@ nav ul {
 nav li {
     float:left;
 	width:25%;
-	padding:8px 0;
+	padding:5px 0;
 	margin:0;
 	text-align:center;
     cursor: pointer;
@@ -328,4 +328,9 @@ nav a:hover{
     #logo img {
         width: 35px;
     }
+}
+
+.index {
+    color: #777;
+    font-weight: normal;
 }
