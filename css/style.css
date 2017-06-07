@@ -160,7 +160,7 @@ hr {
 
     text-decoration: none;
     border-bottom: 1px solid #ddd;
-    color: #005;
+    color: #428bca;
 }
 .post_list_item_hot {
     color: #97190E;
@@ -247,7 +247,8 @@ nav ul {
 	list-style:none;
     border-radius: 10px;
     background-color: rgba(240, 240, 245, 0.13);
-    box-shadow: 0px 2px 3px rgb(213, 207, 207);
+    /*box-shadow: 0px 1px 1px rgb(213, 207, 207);*/
+    border: 1px solid rgb(213, 207, 207);
 }
 nav li {
     float:left;
@@ -256,7 +257,6 @@ nav li {
 	margin:0;
 	text-align:center;
     cursor: pointer;
-    text-shadow: 0px 5px 5px rgb(200, 194, 194);
     color: rgb(130, 127, 127);
 }
 nav li:hover{
