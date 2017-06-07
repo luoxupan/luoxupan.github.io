@@ -69,9 +69,9 @@ console.log(names);//[ 'Raymond', 'Clayton', 'Mike', 'Jennifer' ]
 ```
 
 ## 为数组添加删除元素splice
-unshift：将参数添加到原数组开头，并返回数组的长度 
+unshift：将参数添加到原数组开头，并返回数组的长度
 
-shift：删除原数组第一项，并返回删除元素的值；如果数组为空则返回undefined 
+shift：删除原数组第一项，并返回删除元素的值；如果数组为空则返回undefined
 
 ```
 var nums = [2,3,4,5];
@@ -135,7 +135,7 @@ var sum = nums.reduce(function(runningTotal, currentValue) {
 console.log(sum); // 显示55
 ```
 
-#### 生成新数组的迭代器方法 
+#### 生成新数组的迭代器方法
 
 有两个迭代器方法可以产生新数组：map() 和filter()。map() 和forEach() 有点儿像，对
 数组中的每个元素使用某个函数。两者的区别是map() 返回一个新的数组，该数组的元素
@@ -196,43 +196,3 @@ var misspelled = words.filter(function (str) {
 });
 print(misspelled); // 显示recieve,percieve,concieve
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
