@@ -3,6 +3,10 @@ layout: post_without_date
 title: 时间线
 ---
 
+&raquo;2017-06-08
+
+>you need keep thinking how to speek in a smart way
+
 &raquo;2017-02-03
 
 >2017年计划
@@ -42,10 +46,3 @@ title: 时间线
 >花了一个上午加一个中午终于把个人博客搭建好了，
 >快要正式工作了，以后要记录工作中技术相关事情，
 >不断总结提高
-
-
-
-
-
-
-
