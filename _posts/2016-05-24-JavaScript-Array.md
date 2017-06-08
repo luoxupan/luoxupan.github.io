@@ -99,7 +99,7 @@ forEach()
 ```
 var nums = [4,5,6,7,8,9,10];
 nums.forEach(function(num) {
-	console.log(num);
+    console.log(num);
 });
 ```
 
@@ -110,13 +110,12 @@ nums.forEach(function(num) {
 ```
 var nums = [4,5,6,7,8,9,10];
 var even = nums.every(function(num) {
-	return num%2==0;
+    return num%2==0;
 });
 if (even) {
-	console.log("all numbers are even");
-}
-else {
-	console.log("not all numbers are even");
+    console.log("all numbers are even");
+} else {
+    console.log("not all numbers are even");
 }
 ```
 
@@ -130,7 +129,7 @@ reduce() 方法接受一个函数，返回一个值。该方法会从一个累�
 ```
 var nums = [1,2,3,4,5,6,7,8,9,10];
 var sum = nums.reduce(function(runningTotal, currentValue) {
-	return runningTotal + currentValue;
+    return runningTotal + currentValue;
 });
 console.log(sum); // 显示55
 ```
@@ -144,7 +143,7 @@ console.log(sum); // 显示55
 ```
 var grades = [77, 65, 81, 92, 83];
 var newgrades = grades.map(function (grade) {
-	return grade += 5;
+    return grade += 5;
 });
 console.log(newgrades); // 82, 70, 86, 97, 88
 ```
@@ -154,7 +153,7 @@ console.log(newgrades); // 82, 70, 86, 97, 88
 ```
 var words = ["for","your","information"];
 var acronym = words.map(function (word) {
-	return word[0];
+    return word[0];
 });
 console.log(acronym.join("")); // 显示"fyi"
 ```
@@ -172,10 +171,10 @@ filter() 和every() 类似，传入一个返回值为布尔类型的函数。
 ```
 var grades = [];
 for (var i = 0; i < 20; ++i) {
-	grades[i] = Math.floor(Math.random() * 101);
+    grades[i] = Math.floor(Math.random() * 101);
 }
 var passGrades = grades.filter(function (num) {
-	return num >= 60;
+    return num >= 60;
 });
 console.log("All grades: );
 console.log(grades);
@@ -189,10 +188,10 @@ console.log(passGrades);
 ```
 var words = ["recieve","deceive","percieve","deceit","concieve"];
 var misspelled = words.filter(function (str) {
-	if (str.indexOf("cie") > -1) {
-			return true;
-		}
-		return false;
+    if (str.indexOf("cie") > -1) {
+        return true;
+    }
+    return false;
 });
 print(misspelled); // 显示recieve,percieve,concieve
 ```
