@@ -10,6 +10,9 @@ body {
     width: 90%;
     margin-left: auto;
     margin-right: auto;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizelegibility;
 }
 
 table {
@@ -328,4 +331,8 @@ nav a:hover{
     #logo img {
         width: 35px;
     }
+}
+
+img {
+    width:80%;
 }
