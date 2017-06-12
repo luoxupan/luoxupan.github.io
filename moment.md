@@ -3,6 +3,10 @@ layout: post_without_date
 title: 时间线
 ---
 
+&raquo;2017-06-12
+
+>我的职场很漫长，我要做的就是提升自己。
+
 &raquo;2017-06-08
 
 >you need keep thinking how to speek in a smart way
