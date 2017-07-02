@@ -109,7 +109,7 @@ Approximate timing for various operations on a typical PC:
 
  Given these criteria, my recommendations for a first programming language would be [Python](https://www.python.org/) or [Scheme](http://www.schemers.org/). Another choice is Javascript, not because it is perfectly well-designed for beginners, but because there are so many online tutorials for it, such as [Khan Academy's tutorial](https://www.khanacademy.org/computing/cs/programming). But your circumstances may vary, and there are other good choices. If your age is a single-digit, you might prefer [Alice](http://alice.org/) or [Squeak](http://squeak.org/) or [Blockly](https://blockly-demo.appspot.com/static/apps/index.html) (older learners might also enjoy these). The important thing is that you choose and get started.
 
- ## Appendix: Books and Other Resources
+## Appendix: Books and Other Resources
 
  Several people have asked what books and web pages they should learn from. I repeat that "book learning alone won't be enough" but I can recommend the following:
 
