@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+    <head>
+        <meta charset="utf-8">
+        <meta property="wb:webmaster" content="f97b0cc1aaecb801" />
+
+        <!-- 百度站内搜索 -->
+        <meta name="baidu-site-verification" content="VYH77GDc5e" />
+        <!-- 百度站内搜索 -->
+
+        <title>Node 模块初始化</title>
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1" />-->
+        <!--<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />-->
+
+        <link rel="stylesheet" href="/css/highlight7.1.default.min.css">
+        <script src="/js/highlight7.1.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+
+        <link rel="stylesheet" href="/css/style.css">
+
+        <!--
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-49284793-2', 'yanyiwu.com');
+          ga('send', 'pageview');
+
+        </script>
+        -->
+
+        <!-- picture -->
+        <!--
+        <script type="text/javascript" src="/js/pic.js"> </script>
+        -->
+
+        <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li onclick="location.href='/'">首页</li>
+                <li onclick="location.href='/moment.html'">时间线</li>
+                <li onclick="location.href='#'">发现</li>
+                <li onclick="location.href='/about.html'">关于</li>
+            </ul>
+        </nav> 
+        <div class="blog_index">
+
+            <div>
+                <div>
+<h1 class="post_title">
+    Node 模块初始化
+</h1>
+
+<div class="post_date">
+    16 Jul 2017
+</div>
+
+<div class="blog_post">
+    <h2 id="模块初始化">模块初始化</h2>
+
+<p>一个模块中的JS代码仅在模块第一次被使用时执行一次，并在执行过程中初始化模块的导出对象。之后，缓存起来的导出对象被重复利用。</p>
+
+<h2 id="主模块">主模块</h2>
+
+<p>通过命令行参数传递给NodeJS以启动程序的模块被称为主模块。主模块负责调度组成整个程序的其它模块完成工作。例如通过以下命令启动程序时，main.js就是主模块。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ node main.js
+</code></pre>
+</div>
+
+<h2 id="完整示例">完整示例</h2>
+
+<p>例如有以下目录。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- /home/user/hello/
+    - util/
+        counter.js
+    main.js
+</code></pre>
+</div>
+
+<p>其中<code class="highlighter-rouge">counter.js</code>内容如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var i = 0;
+
+function count() {
+    return ++i;
+}
+
+exports.count = count;
+</code></pre>
+</div>
+
+<p>该模块内部定义了一个私有变量<code class="highlighter-rouge">i</code>，并在<code class="highlighter-rouge">exports</code>对象导出了一个公有方法<code class="highlighter-rouge">count</code>。</p>
+
+<p>主模块<code class="highlighter-rouge">main.js</code>内容如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var counter1 = require('./util/counter');
+var counter2 = require('./util/counter');
+
+console.log(counter1.count());
+console.log(counter2.count());
+console.log(counter2.count());
+</code></pre>
+</div>
+
+<p>运行该程序的结果如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ node main.js
+1
+2
+3
+</code></pre>
+</div>
+
+<p>可以看到，<code class="highlighter-rouge">counter.js</code>并没有因为被require了两次而初始化两次。</p>
+
+<p>总结起来有以下知识点：</p>
+
+<ul>
+  <li>
+    <p>NodeJS是一个JS脚本解析器，任何操作系统下安装NodeJS本质上做的事情都是把NodeJS执行程序复制到一个目录，然后保证这个目录在系统PATH环境变量下，以便终端下可以使用<code class="highlighter-rouge">node</code>命令。</p>
+  </li>
+  <li>
+    <p>NodeJS使用<a href="http://wiki.commonjs.org/wiki/CommonJS">CMD</a>模块系统，主模块作为程序入口点，所有模块在执行过程中只初始化一次。</p>
+  </li>
+</ul>
+
+
+<!-- <p>转载请注明出处: <a href="http://localhost:4000/work/2017/07/16/Node-module-first.html">Node 模块初始化</a></p> -->
+</div>
+
+</div>
+
+<!-- <div class="review">
+
+<!-- 百度分享按钮 start -->
+<!--
+<div class="bdsharebuttonbox">
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a href="#" class="bds_more" data-cmd="more"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"24"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+-->
+<!-- 百度分享按钮 end -->
+
+
+<!-- 微博分享按钮 start -->
+<!--
+<wb:share-button addition="simple" type="button" ralateUid="1644441707"></wb:share-button>
+-->
+
+<!-- 多说评论框 start
+<div class="ds-thread" data-thread-key="/work/2017/07/16/Node-module-first" data-title="Node 模块初始化" data-url="yanyiwu.com/work/2017/07/16/Node-module-first.html">
+</div>
+<!-- 多说评论框 end 
+<!-- 多说公共JS代码 start (一个网页只需插入一次)
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"yanyiwu"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end 
+
+
+</div> -->
+
+
+
+            </div>
+        </div>
+        
+        <footer id="footer">
+            <p>
+                <!--<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1253065108'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1253065108' type='text/javascript'%3E%3C/script%3E"));</script> -->
+                
+            </p>
+        </footer>
+    </body>
+</html>
