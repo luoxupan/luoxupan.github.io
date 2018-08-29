@@ -69,54 +69,49 @@
 
 <p>通过命令行参数传递给NodeJS以启动程序的模块被称为主模块。主模块负责调度组成整个程序的其它模块完成工作。例如通过以下命令启动程序时，main.js就是主模块。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ node main.js
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ node main.js
+</code></pre></div></div>
 
 <h2 id="完整示例">完整示例</h2>
 
 <p>例如有以下目录。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>- /home/user/hello/
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- /home/user/hello/
     - util/
         counter.js
     main.js
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>其中<code class="highlighter-rouge">counter.js</code>内容如下：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>var i = 0;
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var i = 0;
 
 function count() {
     return ++i;
 }
 
 exports.count = count;
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>该模块内部定义了一个私有变量<code class="highlighter-rouge">i</code>，并在<code class="highlighter-rouge">exports</code>对象导出了一个公有方法<code class="highlighter-rouge">count</code>。</p>
 
 <p>主模块<code class="highlighter-rouge">main.js</code>内容如下：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>var counter1 = require('./util/counter');
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var counter1 = require('./util/counter');
 var counter2 = require('./util/counter');
 
 console.log(counter1.count());
 console.log(counter2.count());
 console.log(counter2.count());
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>运行该程序的结果如下：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ node main.js
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ node main.js
 1
 2
 3
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>可以看到，<code class="highlighter-rouge">counter.js</code>并没有因为被require了两次而初始化两次。</p>
 

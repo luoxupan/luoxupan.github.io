@@ -63,7 +63,7 @@
 <div class="blog_post">
     <p>在ES6之前，不能直接为函数的参数指定默认值，只能采用变通的方法</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>function log(x, y) {
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function log(x, y) {
   y = y || 'World';
   console.log(x, y);
 }
@@ -72,23 +72,21 @@ log('Hello') // Hello World
 log('Hello', 'China') // Hello China
 log('Hello', '') // Hello World
 
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>ES6允许为函数的参数设置默认值，即直接写在参数定义的后面</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>function log(x, y = 'World') {
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function log(x, y = 'World') {
   console.log(x, y);
 }
 
 log('Hello') // Hello World
 log('Hello', 'China') // Hello China
 log('Hello', '') // Hello
-</code></pre>
-</div>
+</code></pre></div></div>
 <p>ES6引入rest参数（形式为“…变量名”），用于获取函数的多余参数，这样就不需要使用arguments对象了。rest参数搭配的变量是一个数组，该变量将多余的参数放入数组中。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>function add(...values) {
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function add(...values) {
   let sum = 0;
 
   for (var val of values) {
@@ -100,11 +98,10 @@ log('Hello', '') // Hello
 }
 
 add(2, 5, 3) // 10,	console.log(values[0]);/2
-</code></pre>
-</div>
+</code></pre></div></div>
 <p>箭头函数: ES6允许使用“箭头”（=&gt;）定义函数。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>var f = () =&gt; 5;
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var f = () =&gt; 5;
 // 等同于
 var f = function () { return 5 };
 
@@ -114,19 +111,16 @@ var sum = function(num1, num2) {
   return num1 + num2;
 };
 
-</code></pre>
-</div>
+</code></pre></div></div>
 <p>如果箭头函数的代码块部分多于一条语句，就要使用大括号将它们括起来，并且使用return语句返回。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>var sum = (num1, num2) =&gt; { return num1 + num2; }
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var sum = (num1, num2) =&gt; { return num1 + num2; }
+</code></pre></div></div>
 
 <p>由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>var getTempItem = id =&gt; ({ id: id, name: "Temp" });
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var getTempItem = id =&gt; ({ id: id, name: "Temp" });
+</code></pre></div></div>
 
 
 

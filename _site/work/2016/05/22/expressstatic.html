@@ -67,37 +67,33 @@
 
 <p>假设在 public 目录放置了图片html文件，就可以:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>app.use(express.static('public'));
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app.use(express.static('public'));
+</code></pre></div></div>
 <p>现在，public目录下的文件就可以这样访问了</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>http://localhost:3000/hello.html
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost:3000/hello.html
+</code></pre></div></div>
 
 <p>如果你希望所有通过 express.static 访问的文件都存放在一个“虚拟（virtual）”
 目录（即目录根本不存在）下面，可以通过为静态资源目录指定一个挂载路径的方式来实现，
 如下所示：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>app.use('/static', express.static('public'));
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app.use('/static', express.static('public'));
 
 http://localhost:3000/static/hello.html
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>However, the path that you provide to the express.static function is 
 relative to the directory from where you launch your node process. 
 If you run the express app from another directory, it’s safer to 
 use the absolute path of the directory that you want to serve:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>app.use('/static', express.static(__dirname + '/public'));
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app.use('/static', express.static(__dirname + '/public'));
+</code></pre></div></div>
 
 <h2 id="form表单post请求">form表单post请求</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>//其中action是表单点击提交时触发的
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>//其中action是表单点击提交时触发的
 &lt;form id="loginformA" action="/userlogin" method="post"&gt;
     &lt;div&gt;
         &lt;label for="email"&gt;Email: &lt;/label&gt;
@@ -105,16 +101,14 @@ use the absolute path of the directory that you want to serve:</p>
     &lt;/div&gt;
 	&lt;input type="submit" value="Submit"&gt;&lt;/input&gt;
 &lt;/form&gt;
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>app.post('/userlogin', function(req, res){    
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app.post('/userlogin', function(req, res){    
     
     //对得到的数据，进行一系列处理，
 });
 
-</code></pre>
-</div>
+</code></pre></div></div>
 
 
 

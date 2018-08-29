@@ -72,10 +72,9 @@
 
 <h2 id="设置">设置</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ git config --global user.name "Your Name"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git config --global user.name "Your Name"
 $ git config --global user.email "email@example.com"
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="提交">提交</h2>
 
@@ -83,23 +82,21 @@ $ git config --global user.email "email@example.com"
 
 <p><img src="/img/git-trees.jpg" alt="image" /></p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>#将“当前修改”移动到暂存区(stage)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#将“当前修改”移动到暂存区(stage)
 $ git add somfile.txt
 #将暂存区修改提交
 $ git commit -m "Add somfile.txt."
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="状态">状态</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ git status
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git status
 $ git diff
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="回退">回退</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code># 放弃工作区修改
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 放弃工作区修改
 $ git checkout -- file.name
 $ git checkout -- .
 
@@ -112,45 +109,40 @@ $ git reset --mixed HEAD
 
 # 取消commit、add、工作区修改(需要完全重置)
 $ git reset --hard HEAD
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="记录">记录</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ git reflog
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git reflog
 $ git log
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="删除">删除</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ rm file.name
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ rm file.name
 $ git rm file.name
 $ git commit -m "Del"
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="远程操作">远程操作</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ git remote add origin git@github.com:michaelliao/learngit.git
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git remote add origin git@github.com:michaelliao/learngit.git
 # 第一次推送，-u(--set-upstream)指定默认上游
 $ git push -u origin master
 $ git push origin master
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="克隆">克隆</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ git clone https://github.com/Yikun/yikun.github.com.git path
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/Yikun/yikun.github.com.git path
 $ git clone git@github.com:Yikun/yikun.github.com.git path
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="分支操作">分支操作</h2>
 
 <p><img src="/img/git-merge.png" alt="image" /></p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code># 查看当前分支
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 查看当前分支
 $ git branch
 
 # 创建分支
@@ -166,15 +158,13 @@ $ git merge dev
 
 # 删除分支
 $ git branch -d dev
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="标签">标签</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ git tag 0.1.1
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git tag 0.1.1
 $ git push origin --tags
-</code></pre>
-</div>
+</code></pre></div></div>
 
 
 <!-- <p>转载请注明出处: <a href="http://localhost:4000/work/2017/06/09/Git-Commands.html">Git常用操作总结</a></p> -->
