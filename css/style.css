@@ -245,13 +245,14 @@ nav li {
 nav li:hover{
 	/*background-color:#CCC;*/
 }
-nav li a{
+nav li a {
   font:  bold 13px Arial, Helvetica, sans-serif;
   margin:0;
   padding:0;
   text-decoration:none;
   border:0px;
-  color:rgba(77, 63, 68, 0.9);
+  color: rgb(130, 127, 127);
+  font-size: 16px;
 }
 nav a:hover{
   background:none;
