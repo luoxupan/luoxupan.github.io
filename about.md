@@ -10,18 +10,5 @@ title: 关于我
 
 &raquo;『社交资料』
 
->  [GitHub]
+>  [GitHub]:http://github.com/ygxqqx
 
-
-
-&raquo;『开发语言』
-
->   
->  
->  
-
-
-
-
-
-[GitHub]:http://github.com/ygxqqx
