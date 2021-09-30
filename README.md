@@ -1,12 +1,12 @@
-# ygxqqx.github.io
+### [https://ygxqqx.github.io/](https://ygxqqx.github.io/)
 
-## Dependencies
+### 依赖
 
 + Ruby 2.x
 + Jekyll 3.x `gem install jekyll`
 + Redcaepet `gem install redcarpet`
 
-> - 模板
-> - 启动jekyll serve
+### 启动
++ jekyll serve
 
-### [https://ygxqqx.github.io/](https://ygxqqx.github.io/)
+
