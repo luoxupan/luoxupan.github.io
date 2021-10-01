@@ -1,5 +1,6 @@
 name: ygxqqx
-markdown: kramdown
+# markdown: kramdown
+markdown: makdown
 highlighter: rouge
 
 redcarpet:
