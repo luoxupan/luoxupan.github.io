@@ -332,7 +332,6 @@ table {
 .highlight .gt { color: #9c6 } /* Generic.Traceback */
 .highlight .kc { color: #cc7832; } /* Keyword.Constant */
 .highlight .kd { color: #cf222e; } /* Keyword.Declaration */
-.highlight .nx { color: #8250df; }
 .highlight .kn { color: #cc7832; } /* Keyword.Namespace */
 .highlight .kp { color: #cc7832 } /* Keyword.Pseudo */
 .highlight .kr { color: #cc7832; } /* Keyword.Reserved */
@@ -357,7 +356,7 @@ table {
 .highlight .w { color: #bbb } /* Text.Whitespace */
 .highlight .mf { color: #6897BB } /* Literal.Number.Float */
 .highlight .mh { color: #6897BB } /* Literal.Number.Hex */
-.highlight .mi { color: #6897BB } /* Literal.Number.Integer */
+.highlight .mi { color: #0550ae } /* Literal.Number.Integer */
 .highlight .mo { color: #6897BB } /* Literal.Number.Oct */
 .highlight .sb { color: #c30 } /* Literal.String.Backtick */
 .highlight .sc { color: #c30 } /* Literal.String.Char */
