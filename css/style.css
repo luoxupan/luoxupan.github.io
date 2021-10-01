@@ -47,6 +47,7 @@ table td {
   margin: 2% 4%;
   font-size: 36px;
   padding-bottom: 30px;
+  font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 }
 
 .review {
@@ -289,6 +290,7 @@ nav a:hover{
     margin: 2% 4%;
     font-size: 16px;
     padding-bottom: 30px;
+    font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   }
 
   .photo {
