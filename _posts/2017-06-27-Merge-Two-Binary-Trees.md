@@ -23,7 +23,7 @@ category: work
 
 ## 上代码，简介明了
 
-```
+```js
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
