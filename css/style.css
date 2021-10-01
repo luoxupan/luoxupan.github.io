@@ -311,7 +311,7 @@ table {
 .highlight .hll { background-color: #ffc; }
 .highlight .c { color: #888; font-weight: bold; } /* Comment */
 .highlight .err { color: #a00; background-color: #fff } /* Error */
-.highlight .k { color: #cc7832; } /* Keyword */
+.highlight .k { color: #cf222e; } /* Keyword */
 .highlight .o { color: #555 } /* Operator */
 .highlight .p { color: #333 } /* Punctuation */
 .highlight .po { color: #333 } /* Parenthesis Outer */
@@ -331,7 +331,8 @@ table {
 .highlight .gu { color: #030; } /* Generic.Subheading */
 .highlight .gt { color: #9c6 } /* Generic.Traceback */
 .highlight .kc { color: #cc7832; } /* Keyword.Constant */
-.highlight .kd { color: #cc7832; } /* Keyword.Declaration */
+.highlight .kd { color: #cf222e; } /* Keyword.Declaration */
+.highlight .nx { color: #8250df; }
 .highlight .kn { color: #cc7832; } /* Keyword.Namespace */
 .highlight .kp { color: #cc7832 } /* Keyword.Pseudo */
 .highlight .kr { color: #cc7832; } /* Keyword.Reserved */
