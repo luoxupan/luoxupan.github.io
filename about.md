@@ -9,5 +9,5 @@ title: 关于我
 
 &raquo;『社交资料』
 
->  [GitHub](http://github.com/ygxqqx)
+>  [GitHub](http://github.com/luoxupan)
 
