@@ -46,4 +46,4 @@ category: work
 
 `大胆的目标-->失败-->学习原则-->提高-->更大胆的目标`
 
-<!-- <img width="620" alt="bubble" src="https://user-images.githubusercontent.com/7278711/135696756-0eb8e49c-98a1-47c3-bde3-189a94279461.png"> -->
+<!-- <img width="620" alt="bubble" src="https://luoxupan.github.io/img/bubble.png"> -->
