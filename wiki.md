@@ -16,13 +16,13 @@ Buying a car over 30 years of age.
 
 ---
 
-### 五行
+<!-- ### 五行 -->
 
-![image](https://luoxupan.github.io/img/clinder.png)
+<!-- ![image](https://luoxupan.github.io/img/clinder.png) -->
 
-对照表
+<!-- 对照表 -->
 
-![image](https://luoxupan.github.io/img/wuxin.webp)
+<!-- ![image](https://luoxupan.github.io/img/wuxin.webp) -->
 
 将五行代码整理好：
 
