@@ -24,7 +24,7 @@ Buying a car over 30 years of age.
 
 <!-- ![image](https://luoxupan.github.io/img/wuxin.webp) -->
 
-将五行代码整理好：
+五行整理：
 
 年 月 日的第一个字，称为天干
 
