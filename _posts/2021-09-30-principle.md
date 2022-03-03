@@ -1,7 +1,7 @@
 ---  
 published: true  
 layout: post  
-title: 原则
+title: 《原则》
 date: 2021-09-30  
 category: work  
 ---  
