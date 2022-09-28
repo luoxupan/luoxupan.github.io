@@ -1,12 +1,6 @@
-### [https://luoxupan.github.io/](https://luoxupan.github.io/)
+#### github持续部署
+https://docs.github.com/cn/actions/deployment/about-deployments/about-continuous-deployment
 
-### 依赖
-
-+ Ruby 2.x
-+ Jekyll 3.x `gem install jekyll`
-+ Redcaepet `gem install redcarpet`
-
-### 启动
-+ jekyll serve
-
-
+#### workbox-webpack-plugin文档`service worker`
+- https://developer.chrome.com/docs/workbox/modules/workbox-webpack-plugin/
+- https://webpack.docschina.org/guides/progressive-web-application/
