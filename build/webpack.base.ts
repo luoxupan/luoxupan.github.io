@@ -84,7 +84,7 @@ export const Base = {
   plugins: [
     new CleanWebpackPlugin({}),
     new HTMLWebpackPlugin({
-      template: 'template.html'
+      template: 'src/index.html'
     }),
   ],
   resolve: {
