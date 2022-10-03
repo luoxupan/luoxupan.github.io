@@ -1,8 +1,8 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
-import * as merge from "webpack-merge";
-import { Base } from './webpack.base';
-import * as webpack from "webpack";
-import * as WorkboxWebpackPlugin from "workbox-webpack-plugin";
+const webpack = require('webpack');
+const merge = require('webpack-merge');
+const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+const Base = require('./webpack.base');
 
 /**
  * workbox-webpack-plugin文档`service worker`

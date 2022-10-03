@@ -1,13 +1,13 @@
-import * as path from "path";
-import * as HTMLWebpackPlugin from "html-webpack-plugin";
-import { CleanWebpackPlugin } from "clean-webpack-plugin";
+const path = require('path');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 /**
  * npm i -D XXXX --registry https://registry.npmjs.org
  * npx webpack --help
  */
 
-export const Base = {
+const Base = {
   // target: '', // 需要看看
   output: {
     // `path` is the folder where Webpack will place your bundles
@@ -90,5 +90,7 @@ export const Base = {
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],
   },
-  devtool: "hidden-source-map", // 研究一下为何这个配置会导致包体积变大
-} as any;
+  devtool: "hidden-source-map",
+};
+
+module.exports = Base;
