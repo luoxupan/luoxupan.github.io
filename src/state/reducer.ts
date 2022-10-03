@@ -10,6 +10,7 @@ export function reducer(state: any, action: any) {
     case 'CITY':
       return { ...state, city: action.data };
     default:
-      throw new Error();
+      return state;
+      // throw new Error();
   }
 }

@@ -90,8 +90,7 @@ const Base = {
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],
     alias: {
-      state: path.resolve(__dirname, '../src/state/index')
-      // state: '../src/state/index'
+      state: path.resolve(__dirname, '../src/state/index'),
     },
   },
   devtool: "hidden-source-map",
