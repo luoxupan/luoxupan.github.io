@@ -3,7 +3,7 @@ import { useSearchParams, useLocation } from 'react-router-dom';
 import { UndoRedo } from '../components/index';
 import { State } from 'state';
 
-export default function TestPage() {
+export default React.memo(function TestPage() {
 
   let location = useLocation();
   let [searchParams, setSearchParams] = useSearchParams();
@@ -16,7 +16,7 @@ export default function TestPage() {
     <div id="test-page">
       <button
         onClick={() => {
-          dispatch({ type: 'CITY' });
+          dispatch({ type: 'CITY', data: ['sr'] });
         }}
       >
         Click
@@ -25,4 +25,4 @@ export default function TestPage() {
       <UndoRedo />
     </div>
   );
-}
+});

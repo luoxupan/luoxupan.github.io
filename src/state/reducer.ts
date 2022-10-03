@@ -8,7 +8,7 @@ export const initialState = {
 export function reducer(state: any, action: any) {
   switch (action.type) {
     case 'CITY':
-      return { ...state, city: [{ name: 'sh' }] };
+      return { ...state, city: action.data };
     default:
       throw new Error();
   }
