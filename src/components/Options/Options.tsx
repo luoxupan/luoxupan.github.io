@@ -10,9 +10,13 @@ export function Options() {
   const formRef = React.useRef({} as any);
 
   const initData = async () => {
-    // @ts-ignore
-    const { rules } = await chrome.storage.sync.get(['rules']);
-    form.setFieldsValue({ rules });
+    try {
+      // @ts-ignore
+      const { rules } = await chrome.storage.sync.get(['rules']);
+      form.setFieldsValue({ rules });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   React.useEffect(() => {

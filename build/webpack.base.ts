@@ -90,5 +90,5 @@ export const Base = {
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],
   },
-  // devtool: 'inline-source-map', // 研究一下为何这个配置会导致包体积变大
+  devtool: "hidden-source-map", // 研究一下为何这个配置会导致包体积变大
 } as any;
