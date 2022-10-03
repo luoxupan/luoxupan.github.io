@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useSearchParams, useLocation } from 'react-router-dom';
+import { UndoRedo } from '../components/index';
 
 export default function TestPage() {
 
@@ -11,6 +12,7 @@ export default function TestPage() {
   return (
     <div id="test-page">
       <h1>test page!</h1>
+      <UndoRedo />
     </div>
   );
 }

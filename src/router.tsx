@@ -1,7 +1,7 @@
 import * as React from "react";
 import { WebApp } from "./WebApp";
 import { ErrorPage } from './pages/error-page';
-import { Options, UndoRedo } from './components/index';
+import { Options } from './components/index';
 
 function LoadPage(props: any) {
   const { loader } = props;
@@ -32,7 +32,6 @@ export const router = [
       },
       {
         path: "undoredo/",
-        // element: <UndoRedo />,
         element: <LoadPage loader={() => import('./pages/TestPage')} />,
       },
       {
