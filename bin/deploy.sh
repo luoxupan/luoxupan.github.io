@@ -4,7 +4,7 @@ git checkout gh-pages
 branch=$(git symbolic-ref --short -q HEAD)
 if [ $branch = "gh-pages" ]
 then
-  rm -rf ./assets/* index.html
+  rm -rf ./assets/* ./js/* index.html
   mv ./dist/* .
 
   git config --global user.email "ygxqqx@163.com"
