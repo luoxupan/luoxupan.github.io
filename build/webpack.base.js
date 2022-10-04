@@ -86,7 +86,7 @@ const Base = {
       state: path.resolve(__dirname, '../src/state/index'),
     },
   },
-  devtool: "hidden-source-map",
+  // devtool: "hidden-source-map",
 };
 
 module.exports = Base;
