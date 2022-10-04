@@ -13,13 +13,14 @@ const Base = {
     path: path.resolve(__dirname, '../dist'),
     // `publicPath` is where Webpack will load your bundles from (optional)
     // publicPath: '//static.xxxx.com/cdn/',
-    filename: "assets/js/[name]_[hash:8].js",
+    filename: "js/[name]_[hash:8].js",
     publicPath: '/',
     // `chunkFilename` provides a template for naming code-split bundles (optional)
     chunkFilename: 'chunks/[name]_[contenthash:8].js',
     environment: {
       arrowFunction: false, // webpack拼装的代码不要箭头函数
     },
+    assetModuleFilename: 'assets/[name][ext][query]',
     clean: true, // 清理/dist文件夹
   },
   module: {
@@ -42,8 +43,22 @@ const Base = {
         use: ['style-loader','css-loader','less-loader'],
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
+        /**
+         * 资源模块配置
+         * https://webpack.docschina.org/guides/asset-modules/
+         */
+        test: /\.(eot|ttf|woff|woff2|png|jpg|gif)$/i,
         type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            // maxSize: 4 * 1024, // 4kb
+            maxSize: 500
+          }
+        }
+      },
+      {
+        test: /\.svg$/i,
+        type: 'asset/resource'
       },
     ]
   },

@@ -2,6 +2,8 @@ import * as React from "react";
 import { useSearchParams, useLocation } from 'react-router-dom';
 import { UndoRedo } from '../components/index';
 import { State } from 'state';
+import * as FBImg from '../assets/imgs/feedback.png';
+import * as SearchSVG from '../assets/svg/search.svg';
 
 export default React.memo(function TestPage() {
 
@@ -22,6 +24,8 @@ export default React.memo(function TestPage() {
         Click
       </button>
       <h1>test page!</h1>
+      <img src={FBImg} />
+      <img src={SearchSVG} />
       <UndoRedo />
     </div>
   );

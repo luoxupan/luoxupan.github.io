@@ -60,6 +60,7 @@ module.exports = () => {
         publicPath: "//luoxupan.github.io/", // pre环境
       },
     }
+  }
   if (isProduction) {
     webpack_config = {
       ...webpack_config,
