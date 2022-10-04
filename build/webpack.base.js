@@ -47,7 +47,7 @@ const Base = {
          * 资源模块配置
          * https://webpack.docschina.org/guides/asset-modules/
          */
-        test: /\.(eot|ttf|woff|woff2|png|jpg|gif)$/i,
+        test: /\.(eot|ttf|woff|woff2|png|jpg|jpeg|gif)$/i,
         type: 'asset',
         parser: {
           dataUrlCondition: {
@@ -56,9 +56,15 @@ const Base = {
           }
         }
       },
+      // {
+      //   test: /\.svg$/i,
+      //   type: 'asset/resource'
+      // },
       {
-        test: /\.svg$/i,
-        type: 'asset/resource'
+        test: /\.svg$/,
+        use: [
+          { loader: 'svg-sprite-loader', options: {} },
+        ]
       },
     ]
   },
