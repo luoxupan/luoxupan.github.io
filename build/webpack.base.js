@@ -1,6 +1,5 @@
 const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 /**
  * npm i -D XXXX --registry https://registry.npmjs.org
@@ -46,34 +45,6 @@ const Base = {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
         type: 'asset',
       },
-      // {
-      //   test: /\.ts$/,
-      //   use: [
-      //     {
-      //       loader: 'babel-loader',
-      //       options: {
-      //         // 设置预定义的环境
-      //         presets:[
-      //           [
-      //             // 指定环境的插件
-      //             "@babel/preset-env",
-      //             // 配置信息
-      //             {
-      //               targets: {
-      //                 "chrome": "135", // 要兼容目标的浏览器
-      //                 // "ie": "11"
-      //               },
-      //               "corejs": "3", // 指定corejs的版本
-      //               "useBuiltIns": "usage", // 使用corejs的方式 "usage" 表示按需加载
-      //             }
-      //           ]
-      //         ]
-      //       }
-      //     },
-      //     'ts-loader' // async/await Promise 转换不了 需babel
-      //   ],
-      //   exclude: /node_modules/
-      // }
     ]
   },
   optimization: {
@@ -84,7 +55,6 @@ const Base = {
     runtimeChunk: 'single',
   },
   plugins: [
-    new CleanWebpackPlugin({}),
     new HTMLWebpackPlugin({
       template: 'src/index.html'
     }),
