@@ -1,7 +1,7 @@
 import "./UndoRedo.less";
 import * as React from "react";
 import { useUndoRedo } from "../../hooks/index";
-import { Undo, Redo } from "@mui/icons-material";
+import { UndoOutlined, RedoOutlined } from "@ant-design/icons";
 
 export function UndoRedo() {
   const {
@@ -37,7 +37,7 @@ export function UndoRedo() {
             className="undo-redo-button"
             onClick={() => undo()}
           >
-            <Undo />
+            <UndoOutlined />
           </button>
         </div>
         <div>
@@ -46,7 +46,7 @@ export function UndoRedo() {
             className="undo-redo-button"
             onClick={() => redo()}
           >
-            <Redo />
+            <RedoOutlined />
           </button>
         </div>
       </div>
