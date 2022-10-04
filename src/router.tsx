@@ -9,7 +9,7 @@ function LoadPage(props: any) {
 
   return (
     <React.Suspense fallback={(
-      <div>加载中...</div>
+      <div>Loading...</div>
     )}>
       <Page />
     </React.Suspense>

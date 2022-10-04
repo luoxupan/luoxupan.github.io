@@ -36,7 +36,7 @@ module.exports = () => {
         port: 2002,
         compress: true,
         host: 'localhost',
-        historyApiFallback: true
+        historyApiFallback: true, // 只要是接口命中404此时都会把index.html返回
       },
     }
   }

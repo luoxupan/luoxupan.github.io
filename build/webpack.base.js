@@ -15,6 +15,7 @@ const Base = {
     // `publicPath` is where Webpack will load your bundles from (optional)
     // publicPath: '//static.xxxx.com/cdn/',
     filename: "assets/js/[name]_[hash:8].js",
+    publicPath: '/',
     // `chunkFilename` provides a template for naming code-split bundles (optional)
     chunkFilename: 'chunks/[name]_[contenthash:8].js',
     environment: {
@@ -80,6 +81,7 @@ const Base = {
     splitChunks: {
       chunks: 'all',
     },
+    runtimeChunk: 'single',
   },
   plugins: [
     new CleanWebpackPlugin({}),
