@@ -11,6 +11,7 @@ const Base = require('./webpack.base');
  */
 
 const isPre = process.env.NODE_ENV == 'pre';
+const isTest = process.env.NODE_ENV == 'test';
 const isDev = process.env.NODE_ENV == 'development';
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -40,7 +41,26 @@ module.exports = () => {
       },
     }
   }
-  if (isPre || isProduction) {
+  if (isTest) {
+    webpack_config = {
+      ...webpack_config,
+      mode: 'production',
+      output: {
+        ...webpack_config.output,
+        publicPath: "//luoxupan.github.io/", // 测试环境
+      },
+    }
+  }
+  if (isPre) {
+    webpack_config = {
+      ...webpack_config,
+      mode: 'production',
+      output: {
+        ...webpack_config.output,
+        publicPath: "//luoxupan.github.io/", // pre环境
+      },
+    }
+  if (isProduction) {
     webpack_config = {
       ...webpack_config,
       mode: 'production',

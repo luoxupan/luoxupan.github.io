@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build:dev": "webpack --config ./build/webpack.config.js --node-env=development",
+    "build:test": "webpack --config ./build/webpack.config.js --node-env=test",
     "build:pre": "webpack --config ./build/webpack.config.js --node-env=pre",
     "build:prod": "webpack --config ./build/webpack.config.js --node-env=production",
     "watch": "webpack --config ./build/webpack.config.js --watch --node-env=development",
