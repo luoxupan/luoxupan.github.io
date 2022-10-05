@@ -1,17 +1,25 @@
 import "./SvgUi.less";
 import * as React from "react";
+/**
+ * name svg文件名字
+ */
 
-export function SvgIcon(props: any) {
+interface Props {
+  name: string;
+  style?: any;
+}
 
-  const { url, style } = props;
+export function SvgIcon(props: Props) {
+
+  const { name, style } = props;
 
   React.useEffect(() => {
-    url && require(`../../assets/svg/${url}`);
-  }, [url]);
+    name && require(`../../assets/svg/${name}.svg`);
+  }, [name]);
 
   return (
     <svg className="svg-icon" style={{ ...style }}>
-      <use xlinkHref={'#search'} />
+      <use xlinkHref={`#${name}`} />
     </svg>
   );
 }
