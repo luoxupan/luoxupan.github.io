@@ -36,8 +36,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      # - run: bash ./bin/build.sh
-      # - run: bash ./bin/deploy.sh
+      # - run: bash ./bash/build.sh
+      # - run: bash ./bash/deploy.sh
 
       - name: Build website
         run: |
