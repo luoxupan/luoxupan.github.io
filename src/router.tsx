@@ -26,7 +26,7 @@ export const router = [
         index: true,
         element: (
           <div>
-            index page
+            默认首页
           </div>
         ),
       },
