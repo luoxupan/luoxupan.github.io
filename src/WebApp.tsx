@@ -4,7 +4,6 @@ import { Outlet, Link } from "react-router-dom";
 import { StateProvider } from 'state';
 
 export function WebApp() {
-  console.log('WebApp::=::');
   return (
     <StateProvider>
       <div className="web-app">

@@ -1,4 +1,5 @@
 #!/bin/bash
+# 废弃
 
 git checkout gh-pages
 branch=$(git symbolic-ref --short -q HEAD)
