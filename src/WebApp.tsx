@@ -8,9 +8,9 @@ export function WebApp() {
     <StateProvider>
       <div className="web-app">
         <div className="layout-left">
-          <Link to={`undoredo`}>undo redo</Link>
-          <Link to={`options`}>Options</Link>
-          <Link to={`notfound`}>Not Found</Link>
+          <Link to={`/page/undoredo`}>undo redo</Link>
+          <Link to={`/page/options`}>Options</Link>
+          <Link to={`/page/notfound`}>Not Found</Link>
         </div>
         <div className="layout-main">
           <Outlet />

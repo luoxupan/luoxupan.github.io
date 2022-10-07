@@ -31,11 +31,11 @@ export const router = [
         ),
       },
       {
-        path: "undoredo/",
+        path: "page/undoredo/",
         element: <LoadPage loader={() => import('./pages/TestPage')} />,
       },
       {
-        path: "options/",
+        path: "page/options/",
         element: <Options />,
       },
     ],
