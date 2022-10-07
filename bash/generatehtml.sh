@@ -10,6 +10,7 @@ for i in ${path[@]}
 do
 if [ ! -d $i ]; then
   mkdir -p $i;
+  cp ./dist/index.html $i
 else
   cp ./dist/index.html $i
 fi
