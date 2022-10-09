@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 
 createRoot(
-  document.getElementById("app") as HTMLElement
+  document.body as HTMLElement
 ).render(
   <React.StrictMode>
     <RouterProvider router={createBrowserRouter(
