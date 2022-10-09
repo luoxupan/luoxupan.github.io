@@ -1,4 +1,4 @@
-import "./SvgUi.less";
+import "./index.less";
 import * as React from "react";
 /**
  * name svg文件名字

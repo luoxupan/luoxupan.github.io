@@ -1,4 +1,4 @@
-import "./UndoRedo.less";
+import "./index.less";
 import * as React from "react";
 import { useUndoRedo } from "../../hooks/index";
 import { UndoOutlined, RedoOutlined } from "@ant-design/icons";

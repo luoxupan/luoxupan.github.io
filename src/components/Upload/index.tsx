@@ -1,4 +1,4 @@
-import "./Upload.less";
+import "./index.less";
 import * as React from "react";
 import { Button, message } from 'antd';
 

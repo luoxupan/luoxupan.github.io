@@ -1,7 +1,7 @@
-import "./Options.less";
+import "./index.less";
 import * as React from "react";
 import { Utils } from '../../services';
-import { Upload } from '../Upload/Upload';
+import { Upload } from '../Upload';
 import { Form, Button, Input, Switch, message } from 'antd';
 
 export function Options() {
