@@ -9,9 +9,13 @@ import {
 } from "react-router-dom";
 
 createRoot(
-  document.getElementById("root") as HTMLElement
+  document.getElementById("app") as HTMLElement
 ).render(
   <React.StrictMode>
-    <RouterProvider router={createBrowserRouter(router)} />
+    <RouterProvider router={createBrowserRouter(
+      router, {
+        basename: '/page',
+      }
+    )} />
   </React.StrictMode>
 );
