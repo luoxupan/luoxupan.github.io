@@ -33,7 +33,7 @@ module.exports = () => {
       ...webpack_config,
       mode: 'development',
       devServer: {
-        open: ['/page'],
+        open: true,
         port: 2001,
         compress: true,
         host: 'localhost',

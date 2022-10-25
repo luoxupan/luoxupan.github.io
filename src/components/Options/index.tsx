@@ -37,7 +37,6 @@ export function Options() {
                   return (
                     <div key={index} className="rules-list-item">
                       <Form.Item
-                        {...field}
                         label={'From'}
                         name={[field.name, 'RegExp_url']}
                         rules={[
@@ -48,7 +47,6 @@ export function Options() {
                         <Input autoComplete="off" placeholder="http://x.com/a.js &ensp; 👈or👉 &ensp; http://x.com/*" />
                       </Form.Item>
                       <Form.Item
-                        {...field}
                         label={'To'}
                         name={[field.name, 'redirect_url']}
                         rules={[
@@ -59,7 +57,6 @@ export function Options() {
                         <Input autoComplete="off" placeholder="http://localhost/a.js  &ensp; 👈or👉 &ensp; http://localhost/static/js/" />
                       </Form.Item>
                       <Form.Item
-                        {...field}
                         className='item-switch'
                         valuePropName='checked'
                         name={[field.name, 'enabled']}
