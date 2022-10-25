@@ -2,6 +2,7 @@ import * as React from "react";
 import { WebApp } from "./WebApp";
 import { ErrorPage } from './pages/error-page';
 import { Options } from './components/index';
+import { IndexPage } from './pages/index';
 
 function LoadPage(props: any) {
   const { loader } = props;
@@ -24,11 +25,7 @@ export const router = [
     children: [
       {
         index: true,
-        element: (
-          <div>
-            默认首页
-          </div>
-        ),
+        element: <IndexPage />,
       },
       {
         path: "undoredo/",

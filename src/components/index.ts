@@ -1,3 +1,4 @@
+export * from './LayoutLeft';
 export * from './UndoRedo';
 export * from './Options';
 export * from './Upload';

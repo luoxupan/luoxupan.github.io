@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { router } from './router';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.less';
 import {
   createBrowserRouter,
   RouterProvider,

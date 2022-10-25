@@ -11,14 +11,14 @@ export const http = axios.create({
 });
 
 // 本地需要重新种cookie
-if (Env.isDev) {
-  const url = `${Host[Env.env || '']}/platapi/getCookie`;
-  axios.get(url, { withCredentials: true }).then(res => {
-    (res.data?.data || '').split(';').map((item: any) => {
-      document.cookie = item.trim();
-    });
-  });
-}
+// if (Env.isDev) {
+//   const url = `${Host[Env.env || '']}/platapi/getCookie`;
+//   axios.get(url, { withCredentials: true }).then(res => {
+//     (res.data?.data || '').split(';').map((item: any) => {
+//       document.cookie = item.trim();
+//     });
+//   });
+// }
 
 http.interceptors.request.use((req) => {
   req.params = {
@@ -53,14 +53,3 @@ export async function genHttpRequest<T>(options: any) {
     throw e;
   }
 }
-
-// 使用示例
-// static async submitTest(data) {
-//   return await genHttpRequest({
-//     method: 'POST',
-//     url: '/api/v1/product/submitTest',
-//     data: {
-//       data
-//     },
-//   });
-// }

@@ -1,17 +1,14 @@
 import * as React from "react";
 import './WebApp.less';
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { StateProvider } from 'state';
+import { LayoutLeft } from 'components';
 
 export function WebApp() {
   return (
     <StateProvider>
       <div className="web-app">
-        <div className="layout-left">
-          <Link to={`/undoredo`}>undo redo</Link>
-          <Link to={`/options`}>Options</Link>
-          <Link to={`/notfound`}>Not Found</Link>
-        </div>
+        <LayoutLeft />
         <div className="layout-main">
           <Outlet />
         </div>
