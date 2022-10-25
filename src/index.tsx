@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 
 createRoot(
-  document.body as HTMLElement
+  document.querySelector('#app') as HTMLElement
 ).render(
   // <React.StrictMode> TODO: 此标签会导致组件mount两次
   // https://github.com/facebook/react/blob/main/CHANGELOG.md#breaking-changes
