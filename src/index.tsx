@@ -15,7 +15,7 @@ createRoot(
   // https://github.com/facebook/react/blob/main/CHANGELOG.md#breaking-changes
     <RouterProvider router={createBrowserRouter(
       router, {
-        basename: '/page',
+        basename: '/',
       }
     )} />
   // </React.StrictMode>

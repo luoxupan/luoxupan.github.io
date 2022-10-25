@@ -1,3 +1,2 @@
-./dist/page/
-./dist/page/undoredo
-./dist/page/options
+./dist/undoredo
+./dist/options
