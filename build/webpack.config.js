@@ -33,11 +33,17 @@ module.exports = () => {
       ...webpack_config,
       mode: 'development',
       devServer: {
-        open: true,
+        open: ['/page'],
         port: 2001,
         compress: true,
         host: 'localhost',
         historyApiFallback: true, // 只要是接口命中404此时都会把index.html返回
+        proxy: {
+          '/demo': {
+            target: 'http://localhost:8090',
+            changeOrigin: true
+          },
+        },
       },
     }
   }

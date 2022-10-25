@@ -11,11 +11,12 @@ import {
 createRoot(
   document.body as HTMLElement
 ).render(
-  <React.StrictMode>
+  // <React.StrictMode> TODO: 此标签会导致组件mount两次
+  // https://github.com/facebook/react/blob/main/CHANGELOG.md#breaking-changes
     <RouterProvider router={createBrowserRouter(
       router, {
         basename: '/page',
       }
     )} />
-  </React.StrictMode>
+  // </React.StrictMode>
 );

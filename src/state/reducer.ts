@@ -7,8 +7,8 @@ export const initialState = {
 
 export function reducer(state: any, action: any) {
   switch (action.type) {
-    case 'CITY':
-      return { ...state, city: action.data };
+    case 'update':
+      return { ...state, ...action.data };
     default:
       return state;
       // throw new Error();

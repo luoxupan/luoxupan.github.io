@@ -40,7 +40,23 @@ const Base = {
       },
       {
         test: /\.less$/i,
-        use: ['style-loader','css-loader','less-loader'],
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+          {
+            loader: 'less-loader', // compiles Less to CSS
+            options: {
+              lessOptions: {
+                modifyVars: {
+                  'primary-color': '#F76A31',
+                  'link-color': '#F76A31',
+                  'border-radius-base': '4px',
+                },
+                javascriptEnabled: true,
+              },
+            },
+          }
+        ],
       },
       {
         /**
@@ -83,8 +99,11 @@ const Base = {
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],
     alias: {
-      state: path.resolve(__dirname, '../src/state/index'),
-      components: path.resolve(__dirname, '../src/components/index'),
+      state: path.posix.resolve(__dirname, '../src/state/index'),
+      config: path.posix.resolve(__dirname, '../src/config/index'),
+      services: path.posix.resolve(__dirname, '../src/services/index'),
+      components: path.posix.resolve(__dirname, '../src/components/index'),
+      httprequest: path.posix.resolve(__dirname, '../src/httprequest/index'),
     },
   },
   // devtool: "hidden-source-map",

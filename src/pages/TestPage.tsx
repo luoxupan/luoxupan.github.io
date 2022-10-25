@@ -17,7 +17,7 @@ export default React.memo(function TestPage() {
     <div id="test-page">
       <button
         onClick={() => {
-          dispatch({ type: 'CITY', data: ['sr'] });
+          dispatch({ type: 'update', data: { city: ['sr'] } });
         }}
       >
         Click
