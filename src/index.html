@@ -7,6 +7,14 @@
     <style type="text/css">
     </style>
   </head>
+  <script>
+    window.addEventListener('error', (...args) => {
+      console.log('error:error', args);
+    });
+    window.addEventListener('unhandledrejection', (...args) => {
+      console.log('error:unhandledrejection:', args);
+    });
+  </script>
   <body>
     <div id="app"></div>
     <!-- <editable-list
