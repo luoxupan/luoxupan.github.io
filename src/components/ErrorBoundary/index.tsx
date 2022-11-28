@@ -4,7 +4,7 @@ export class ErrorBoundary extends React.Component {
   componentDidCatch(error: any, errorInfo: any) {
     console.log('componentDidCatch:', error, errorInfo);
     window.postMessage({
-      type: 'componentDidCatch',
+      type: 'componentdidcatch',
       data: { error, errorInfo }
     }, '*');
   }
