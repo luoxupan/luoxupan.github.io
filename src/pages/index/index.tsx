@@ -13,10 +13,10 @@ export function IndexPage(props: any) {
   const [showName, setShowName] = React.useState(false);
 
   React.useEffect(() => {
-    setTimeout(() => {
-      // console.log('props:props', props)
-      console.log('props:', props.data.data_name);
-    }, 2000);
+    // setTimeout(() => {
+    //   // console.log('props:props', props)
+    //   console.log('props:', props.data.data_name);
+    // }, 2000);
   } ,[]);
 
   return (
@@ -27,7 +27,7 @@ export function IndexPage(props: any) {
           setShowName(true);
         }}
       >
-        Show Name
+        点击Crash
       </Button>
       <div>首页</div>
     </div>
