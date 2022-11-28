@@ -21,7 +21,7 @@ export function IndexPage(props: any) {
 
   return (
     <div className="main-page">
-      {showName && <div>name: {props.props.name}</div>}
+      {showName && <div>name: {props.data.name}</div>}
       <Button
         onClick={() => {
           setShowName(true);
