@@ -10,11 +10,11 @@ export function StateProvider(props: any) {
 
   React.useEffect(() => {
     // 初始化全局公有的数据国家、城市等
-    Promise.all([
-      CommonRequest.getCountries(),
-    ]).then((res: any) => {
-      dispatch({ type: 'update', data: { countries: res[0]?.data } });
-    });
+    // Promise.all([
+    //   CommonRequest.getCountries(),
+    // ]).then((res: any) => {
+    //   dispatch({ type: 'update', data: { countries: res[0]?.data } });
+    // });
   }, []);
 
   return (
