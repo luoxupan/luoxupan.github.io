@@ -4,6 +4,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import { record, Replayer } from 'rrweb';
+// import { record, Replayer } from '../../../../rrweb/packages/rrweb/src';
 let events: any = [];
 let stopFn = undefined as any;
 export function LayoutLeft(props: any) {
@@ -16,7 +17,7 @@ export function LayoutLeft(props: any) {
       <Button
         onClick={() => {
           events.length = 0;
-            stopFn = record({
+          stopFn = record({
             emit(event: any) {
               events.push(event);
             },
