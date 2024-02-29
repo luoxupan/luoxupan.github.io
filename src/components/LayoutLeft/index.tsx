@@ -19,6 +19,7 @@ export function LayoutLeft(props: any) {
           events.length = 0;
           stopFn = record({
             emit(event: any) {
+              console.log('events:', event)
               events.push(event);
             },
           });
@@ -31,7 +32,6 @@ export function LayoutLeft(props: any) {
           stopFn && stopFn();
           stopFn = undefined;
           console.log('event:', { events });
-
           setOpenModal(true);
           setTimeout(() => {
             const replayer = new Replayer(events, { root: document.querySelector('.ant-modal-body') });
