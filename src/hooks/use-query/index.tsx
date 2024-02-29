@@ -9,16 +9,17 @@ interface Options {
 
 export function useQuery(options: Options) {
   const { queryKey, queryFn, enabled } = options;
+  const queryClient = React.useRef(new QueryClient());
   // 存储接口数据
   const [state, setState] = React.useState(undefined as any);
 
-  const defaultedOptions = QueryClient.defaultQueryOptions(options);
+  const defaultedOptions = queryClient.current.defaultQueryOptions(options);
 
   React.useEffect(() => {
   }, [defaultedOptions]);
 
   return {
     response: state,
-    queryClient: QueryClient,
+    queryClient: queryClient.current,
   };
 }

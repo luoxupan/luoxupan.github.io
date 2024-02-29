@@ -1,13 +1,16 @@
 export class QueryClient {
-  static defaultQueryOptions(options: any) {
+  constructor() {
+  }
+
+  defaultQueryOptions(options: any) {
     return {};
   }
 
-  static fetchQuery() {
+  fetchQuery() {
     
   }
 
-  static refetchQuery() {
+  refetchQuery() {
 
   }
 }
