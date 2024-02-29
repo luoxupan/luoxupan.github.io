@@ -4,14 +4,16 @@ import { State } from 'state';
 import { Button } from 'antd';
 import './index.less';
 import html2canvas from '../../html2canvas';
+import { useQuery } from '../../hooks';
 
 export function IndexPage(props: any) {
 
   let location = useLocation();
   let [searchParams, setSearchParams] = useSearchParams();
-  console.log('useSearchParams:', searchParams.get('id'));
+  // console.log('useSearchParams:', searchParams.get('id'));
   const { state, dispatch } = React.useContext(State);
   const [showName, setShowName] = React.useState(false);
+  const [count, setCount] = React.useState(1);
 
   React.useEffect(() => {
     // setTimeout(() => {
@@ -19,10 +21,20 @@ export function IndexPage(props: any) {
     //   console.log('props:', props.data.data_name);
     // }, 2000);
   } ,[]);
+  const query = useQuery({ queryKey: [count], queryFn: () => {}});
+  console.log('query:', query);
 
   return (
     <div className="main-page">
       {showName && <div>name: {props.data.name}</div>}
+      {/* {showName && <div>name: {'props.data.name'}</div>} */}
+      <Button
+        onClick={() => {
+          setCount(count + 1);
+        }}
+      >
+        点击增加
+      </Button>
       <Button
         onClick={() => {
           setShowName(true);

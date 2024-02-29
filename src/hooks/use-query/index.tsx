@@ -4,7 +4,7 @@ import { QueryClient } from './queryClient'
 interface Options {
   queryKey: any[];
   queryFn: Function;
-  enabled: Boolean;
+  enabled?: Boolean;
 }
 
 export function useQuery(options: Options) {
@@ -13,10 +13,12 @@ export function useQuery(options: Options) {
   // 存储接口数据
   const [state, setState] = React.useState(undefined as any);
 
-  const defaultedOptions = queryClient.current.defaultQueryOptions(options);
-
   React.useEffect(() => {
-  }, [defaultedOptions]);
+    if (enabled || enabled === undefined) {
+      // 获取接口数据
+      queryClient.current.fetchQuery();
+    }
+  }, [...options.queryKey]);
 
   return {
     response: state,
