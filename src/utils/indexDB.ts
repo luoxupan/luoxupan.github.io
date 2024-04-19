@@ -36,6 +36,7 @@ export class IndexDB {
   // 当前浏览器是否支持indexDB
   static _index_db_support = 'indexedDB' in window ? true : false;
   static init() {
+    // 必须传入用户ticket作为用户唯一标识
     if (IndexDB._index_db_support) {
       // @ts-ignore
       IndexDB._init_promise = new Promise((resolve: Function, reject: Function) => {
@@ -64,7 +65,7 @@ export class IndexDB {
     return IndexDB._db.transaction([conf.object_store], "readwrite").objectStore(conf.object_store);
   }
 
-  static setItem(key: string, data: { params: any, response: any }) {
+  static setItem(key: string, data: { params: Object, response: any }) {
     if (IndexDB._index_db_support) {
       return new Promise((resolve: Function, reject: Function) => {
         IndexDB._init_promise.then(() => {
@@ -123,12 +124,14 @@ export class IndexDB {
   }
 
   // 接口数据获取
-  static get(key: string, params: any) {
+  static get(key: string, params: Object) {
     return new Promise((resolve: Function, reject: Function) => {
-      const timeblock = 1 * 60 * 60 * 1000; // 一小时的毫秒数
+      const timeblock = 1 * 30 * 60 * 1000; // 半小时的毫秒数
       const datanow = Date.now();
       IndexDB.getItem(key).then((result: any) => {
         if (result && result.timestamp && result.params && result.response) {
+          // TODO: 因为是预获取数据 所以取值后直接删除
+          // IndexDB.deleteItem(key);
           const effective = (datanow - result.timestamp) < timeblock; // 有效时间区间内
           if (effective && isEqual(result.params, params)) {
             resolve(result.response);
@@ -156,6 +159,10 @@ export class IndexDB {
 
 /**
  * 使用示例
+  IndexDB.setItem('/optimusChannel/preLoadData', {
+    params: params,
+    response: response,
+  });
   IndexDB.get('/optimusChannel/preLoadData', params).then((response) => {
     if (response) {
       return response;
