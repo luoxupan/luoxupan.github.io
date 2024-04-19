@@ -36,6 +36,8 @@ export class IndexDB {
   // 当前浏览器是否支持indexDB
   static _index_db_support = 'indexedDB' in window ? true : false;
   static init() {
+    // @ts-ignore
+    window.IndexDB = IndexDB;
     // 必须传入用户ticket作为用户唯一标识
     if (IndexDB._index_db_support) {
       // @ts-ignore
@@ -57,8 +59,6 @@ export class IndexDB {
       });
       return IndexDB._init_promise;
     }
-    // @ts-ignore
-    window.IndexDB = IndexDB;
   }
 
   static getObjectStore() {
@@ -129,9 +129,9 @@ export class IndexDB {
       const timeblock = 1 * 30 * 60 * 1000; // 半小时的毫秒数
       const datanow = Date.now();
       IndexDB.getItem(key).then((result: any) => {
-        if (result && result.timestamp && result.params && result.response) {
+        if (result) {
           // TODO: 因为是预获取数据 所以取值后直接删除
-          // IndexDB.deleteItem(key);
+          IndexDB.deleteItem(key);
           const effective = (datanow - result.timestamp) < timeblock; // 有效时间区间内
           if (effective && isEqual(result.params, params)) {
             resolve(result.response);
@@ -139,19 +139,6 @@ export class IndexDB {
           }
         }
         resolve(undefined);
-      });
-    });
-  }
-
-  static race(req_1: any, req_2: any) {
-    return new Promise((resolve: Function, reject: Function) => {
-      Promise.race([req_1, req_2]).then((res: any) => {
-        console.log('res:', res);
-        if (res) {
-          resolve(res);
-        } else {
-          resolve(req_2);
-        }
       });
     });
   }
