@@ -36,26 +36,28 @@ export class IndexDB {
   // 当前浏览器是否支持indexDB
   static _index_db_support = 'indexedDB' in window ? true : false;
   static init() {
-    // @ts-ignore
-    IndexDB._init_promise = new Promise((resolve: Function, reject: Function) => {
-      const request = window.indexedDB.open(conf.db_name, conf.version);
-      request.onerror = (event) => {
-        reject(event);
-      };
-      request.onupgradeneeded = (event: any) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains(conf.object_store)) {
-          db.createObjectStore(conf.object_store);
-        }
-      };
-      request.onsuccess = (event: any) => {
-        IndexDB._db = event.target.result;
-        resolve(IndexDB._db);
-      };
-    });
+    if (IndexDB._index_db_support) {
+      // @ts-ignore
+      IndexDB._init_promise = new Promise((resolve: Function, reject: Function) => {
+        const request = window.indexedDB.open(conf.db_name, conf.version);
+        request.onerror = (event) => {
+          reject(event);
+        };
+        request.onupgradeneeded = (event: any) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(conf.object_store)) {
+            db.createObjectStore(conf.object_store);
+          }
+        };
+        request.onsuccess = (event: any) => {
+          IndexDB._db = event.target.result;
+          resolve(IndexDB._db);
+        };
+      });
+      return IndexDB._init_promise;
+    }
     // @ts-ignore
     window.IndexDB = IndexDB;
-    return IndexDB._init_promise;
   }
 
   static getObjectStore() {
@@ -63,49 +65,61 @@ export class IndexDB {
   }
 
   static setItem(key: string, data: { params: any, response: any }) {
-    return new Promise((resolve: Function, reject: Function) => {
-      IndexDB._init_promise.then(() => {
-        const request = IndexDB.getObjectStore().put({
-          ...data,
-          isIndexDBCache: true,
-          timestamp: Date.now(),
-        }, key);
-        request.onerror = (e: any) => {
-          reject(e);
-        };
-        request.onsuccess = (e: any) => {
-          resolve(e);
-        };
+    if (IndexDB._index_db_support) {
+      return new Promise((resolve: Function, reject: Function) => {
+        IndexDB._init_promise.then(() => {
+          const request = IndexDB.getObjectStore().put({
+            ...data,
+            isIndexDBCache: true,
+            timestamp: Date.now(),
+          }, key);
+          request.onerror = (e: any) => {
+            // reject(e);
+            resolve(undefined);
+          };
+          request.onsuccess = (e: any) => {
+            resolve(e);
+          };
+        });
       });
-    });
+    }
+    return Promise.resolve(undefined);
   }
   
   static getItem(key: string,) {
-    return new Promise((resolve: Function, reject: Function) => {
-      IndexDB._init_promise.then(() => {
-        const request = IndexDB.getObjectStore().get(key);
-        request.onerror = (e: any) => {
-          reject(e);
-        };
-        request.onsuccess = (e: any) => {
-          resolve(e.target.result);
-        };
+    if (IndexDB._index_db_support) {
+      return new Promise((resolve: Function, reject: Function) => {
+        IndexDB._init_promise.then(() => {
+          const request = IndexDB.getObjectStore().get(key);
+          request.onerror = (e: any) => {
+            // reject(e);
+            resolve(undefined);
+          };
+          request.onsuccess = (e: any) => {
+            resolve(e.target.result);
+          };
+        });
       });
-    });
+    }
+    return Promise.resolve(undefined);
   }
 
   static deleteItem(key: string) {
-    return new Promise((resolve: Function, reject: Function) => {
-      IndexDB._init_promise.then(() => {
-        const request = IndexDB.getObjectStore().delete(key);
-        request.onerror = (e: any) => {
-          reject(e);
-        };
-        request.onsuccess = (e: any) => {
-          resolve(e);
-        };
+    if (IndexDB._index_db_support) {
+      return new Promise((resolve: Function, reject: Function) => {
+        IndexDB._init_promise.then(() => {
+          const request = IndexDB.getObjectStore().delete(key);
+          request.onerror = (e: any) => {
+            // reject(e);
+            resolve(undefined);
+          };
+          request.onsuccess = (e: any) => {
+            resolve(e);
+          };
+        });
       });
-    });
+    }
+    return Promise.resolve(undefined);
   }
 
   // 接口数据获取
@@ -114,12 +128,14 @@ export class IndexDB {
       const timeblock = 1 * 60 * 60 * 1000; // 一小时的毫秒数
       const datanow = Date.now();
       IndexDB.getItem(key).then((result: any) => {
-        const effective = (datanow - result.timestamp) < timeblock;
-        if (effective && isEqual(result.params, params)) {
-          resolve(result.response);
-        } else {
-          resolve(undefined);
+        if (result && result.timestamp && result.params && result.response) {
+          const effective = (datanow - result.timestamp) < timeblock; // 有效时间区间内
+          if (effective && isEqual(result.params, params)) {
+            resolve(result.response);
+            return;
+          }
         }
+        resolve(undefined);
       });
     });
   }
