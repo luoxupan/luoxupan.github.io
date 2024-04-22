@@ -35,7 +35,6 @@ export class IndexDB {
   static _init_promise = undefined as any;
   // 当前浏览器是否支持indexDB
   static _index_db_support = 'indexedDB' in window ? true : false;
-  static _all_cache_keys = [] as any;
   static init() {
     // @ts-ignore
     window.IndexDB = IndexDB;
@@ -55,14 +54,7 @@ export class IndexDB {
         };
         request.onsuccess = (event: any) => {
           IndexDB._db = event.target.result;
-          const req = IndexDB.getObjectStore().getAllKeys();
-          req.onsuccess = (e) => {
-            IndexDB._all_cache_keys = e?.target?.result || [];
-            resolve(IndexDB._db);
-          };
-          req.onerror = (e) => {
-            resolve(IndexDB._db);
-          };
+          resolve(IndexDB._db);
         };
       });
       return IndexDB._init_promise;
@@ -87,7 +79,6 @@ export class IndexDB {
           };
           request.onsuccess = (e: any) => {
             resolve(e);
-            IndexDB._all_cache_keys.push(key);
           };
         });
       });
@@ -99,17 +90,13 @@ export class IndexDB {
     if (IndexDB._index_db_support) {
       return new Promise((resolve: Function, reject: Function) => {
         IndexDB._init_promise.then(() => {
-          if (IndexDB._all_cache_keys.includes(key)) {
-            const request = IndexDB.getObjectStore().get(key);
-            request.onerror = (e) => {
-              resolve(undefined);
-            };
-            request.onsuccess = (e) => {
-              resolve(e.target.result);
-            };
-          } else {
+          const request = IndexDB.getObjectStore().get(key);
+          request.onerror = () => {
             resolve(undefined);
-          }
+          };
+          request.onsuccess = (e: any) => {
+            resolve(e.target.result);
+          };
         });
       });
     }
@@ -126,7 +113,6 @@ export class IndexDB {
           };
           request.onsuccess = (e: any) => {
             resolve(e);
-            IndexDB._all_cache_keys.splice(IndexDB._all_cache_keys.indexOf(key), 1);
           };
         });
       });
