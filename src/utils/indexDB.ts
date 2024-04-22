@@ -33,6 +33,7 @@ export const isEqual = <TType>(x: TType, y: TType): boolean => {
 export class IndexDB {
   static _db = undefined as any;
   static _init_promise = undefined as any;
+  static _expire_time = 5 * 60000; // 五分钟的毫秒数
   // 当前浏览器是否支持indexDB
   static _index_db_support = 'indexedDB' in window ? true : false;
   static init() {
@@ -143,13 +144,11 @@ export class IndexDB {
   // 接口数据获取
   static getApiData(key: string, params: Object) {
     return new Promise((resolve: Function, reject: Function) => {
-      const timeblock = 5 * 60000; // 五分钟的毫秒数
-      const datanow = Date.now();
       IndexDB.getItem(key).then((result: any) => {
         if (result) {
           // TODO: 因为是预获取数据 所以取值后直接删除
           IndexDB.deleteItem(key);
-          const effective = (datanow - result.timestamp) < timeblock; // 有效时间区间内
+          const effective = (Date.now() - result.timestamp) < IndexDB._expire_time; // 有效时间区间内
           if (effective && isEqual(result.params, params)) {
             resolve(result.response);
             return;
