@@ -142,9 +142,9 @@ export class IndexDB {
   }
 
   // 接口数据获取
-  static get(key: string, params: Object) {
+  static getApiData(key: string, params: Object) {
     return new Promise((resolve: Function, reject: Function) => {
-      const timeblock = 1 * 30 * 60 * 1000; // 半小时的毫秒数
+      const timeblock = 5 * 60000; // 五分钟的毫秒数
       const datanow = Date.now();
       IndexDB.getItem(key).then((result: any) => {
         if (result) {
@@ -164,15 +164,17 @@ export class IndexDB {
 
 /**
  * 使用示例
-  IndexDB.setItem('/optimusChannel/preLoadData', {
-    params: params,
-    response: response,
-  });
-  IndexDB.get('/optimusChannel/preLoadData', params).then((response) => {
-    if (response) {
-      return response;
-    } else {
-      return Http.post('/optimusChannel/preLoadData', params)
-    }
-  });
+  export function getPreLoadData(params) {
+    return IndexDB.getApiData(URLNEW.preLoadData, params).then((response) => {
+      if (response) {
+        return response;
+      } else {
+        return Http.post(URLNEW.preLoadData, params)
+      }
+    });
+  }
+
+  export function setPreLoadData(params) {
+    return IndexDB.setApiData(URLNEW.preLoadData, params, () => Http.post(URLNEW.preLoadData, params));
+  }
  */
