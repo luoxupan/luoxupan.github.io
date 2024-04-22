@@ -123,6 +123,24 @@ export class IndexDB {
     return Promise.resolve(undefined);
   }
 
+  // 接口数据设置
+  static setApiData(key: string, params: Object, func: Function) {
+    return new Promise((resolve, reject) => {
+      if (IndexDB._index_db_support) {
+        func().then((res: any) => {
+          IndexDB.setItem(key, {
+            params,
+            response: res
+          }).finally(() => {
+            resolve(res);
+          });
+        });
+      } else {
+        resolve(undefined);
+      }
+    });
+  }
+
   // 接口数据获取
   static get(key: string, params: Object) {
     return new Promise((resolve: Function, reject: Function) => {
@@ -154,7 +172,7 @@ export class IndexDB {
     if (response) {
       return response;
     } else {
-      return Http.post('/optimusChannel/preLoadData', { ...params, })
+      return Http.post('/optimusChannel/preLoadData', params)
     }
   });
  */
