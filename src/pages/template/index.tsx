@@ -11,6 +11,7 @@ import {
 } from './fmp-schema/utils';
 import { JsonView } from './components/JsonView';
 import { EyeOutlined } from '@ant-design/icons';
+import { tempjson } from './temp';
 
 export function TemplatePage(props: any) {
 
@@ -50,6 +51,8 @@ export function TemplatePage(props: any) {
         setDetailData(data);
       }
     })();
+    tempRef.current.setFormData(tempjson);
+    setDetailData(tempjson);
   }, [tmpl_id]);
 
   return (
@@ -61,6 +64,7 @@ export function TemplatePage(props: any) {
     >
       <div className='header-top'>
         <Button
+          type='primary'
           onClick={() => {
             setVisible(true);
             // 模拟的数据
@@ -79,18 +83,16 @@ export function TemplatePage(props: any) {
         <div className='ant-modal-mask'></div>
         <div className='ant-modal-wrap main'>
           <div className='top-bar'>
-            {jsonData === null && <>
-              <Button
-                style={{ marginLeft: 10 }}
-                onClick={() => {
-                  console.log(tempFormRef.current.getFieldsValue());
-                }}>获取Form数据</Button>
-              <Button
-                style={{ marginLeft: 10 }}
-                onClick={async () => {
-                  const formData = await tempFormRef.current.validateFields();
-                }}>校验必填项</Button>
-            </>}
+            <Button
+              style={{ marginLeft: 10 }}
+              onClick={() => {
+                console.log(tempFormRef.current.getFieldsValue());
+              }}>获取Form数据</Button>
+            <Button
+              style={{ marginLeft: 10 }}
+              onClick={async () => {
+                const formData = await tempFormRef.current.validateFields();
+              }}>校验必填项</Button>
             <Button
               style={{ marginLeft: 10 }}
               onClick={() => {

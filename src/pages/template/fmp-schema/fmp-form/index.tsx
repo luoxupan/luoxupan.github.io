@@ -162,7 +162,15 @@ export const FmpForm = React.forwardRef((props: any, ref: any) => {
   try {
     return (<>
       <Form layout='horizontal' form={form} className='fmp-schema-form'>
-        <div ref={gridRef} style={{maxHeight: '800px', overflowY: 'scroll'}}>{renderItems(schema, disabled, 1)}</div>
+        <div
+          ref={gridRef}
+          style={{
+            maxHeight: '800px',
+            // overflowY: 'scroll',
+          }}
+        >
+          {renderItems(schema, disabled, 1)}
+        </div>
       </Form>
     </>);
   } catch (error) {
