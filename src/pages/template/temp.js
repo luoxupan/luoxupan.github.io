@@ -1,16 +1,37 @@
 export const tempjson = [
   {
+    "type": "Boolean",
+    "subType": "Switch",
+    "name": "open",
+    "label": "Open",
+    "label_en": "开关",
+    "items": [],
+    "required": true,
+    "linkage": {},
+    "canLinkage": false,
+    "automaticKey": false,
+    "dataSource": {
+      "enum": []
+    },
+    "config": {
+      "defaultValue": true
+    },
+    "icon": "",
+    "id": 1766385861700,
+    "active": true
+  },
+  {
     "type": "Object",
     "subType": "Object",
-    "name": "object_01",
-    "label": "对象字段",
-    "label_en": "object 01",
+    "name": "Insurance",
+    "label": "保险",
+    "label_en": "Insurance",
     "items": [
       {
         "type": "Number",
         "subType": "InputNumber",
         "name": "number",
-        "label": "数字字段",
+        "label": "保险计算周期",
         "label_en": "obj01item",
         "items": [],
         "required": true,
@@ -39,11 +60,22 @@ export const tempjson = [
     "active": false
   },
   {
+    "type": "Text",
+    "subType": "",
+    "name": "title_str",
+    "label": "弹窗标题",
+    "label_en": "title str",
+    "required": false,
+    "icon": "",
+    "id": 1766385927372,
+    "active": false
+  },
+  {
     "type": "String",
     "subType": "Input",
-    "name": "string_01",
-    "label": "String字段",
-    "label_en": "string 01",
+    "name": "href_01",
+    "label": "跳转链接",
+    "label_en": "href 01",
     "items": [],
     "required": true,
     "linkage": {},
@@ -62,7 +94,7 @@ export const tempjson = [
     "type": "Number",
     "subType": "NormalArray",
     "name": "array_01",
-    "label": "数字数组字段",
+    "label": "财务标签",
     "label_en": "array 01",
     "items": [],
     "required": false,
@@ -81,14 +113,14 @@ export const tempjson = [
     "type": "Object",
     "subType": "Array",
     "name": "arr_obj",
-    "label": "对象数组",
+    "label": "社保代扣配置",
     "label_en": "Arr Obj",
     "items": [
       {
         "type": "Text",
         "subType": "",
         "name": "i18n",
-        "label": "I18n 文案",
+        "label": "扣款时使用的的文案",
         "label_en": "i18n",
         "required": false,
         "icon": "",
@@ -99,7 +131,7 @@ export const tempjson = [
         "type": "String",
         "subType": "Input",
         "name": "string_01",
-        "label": "字符串字段",
+        "label": "产品线ID",
         "label_en": "string 01",
         "items": [],
         "required": true,
@@ -131,21 +163,21 @@ export const tempjson = [
     "type": "Object",
     "subType": "Object",
     "name": "obj_02",
-    "label": "多层对象",
+    "label": "出车拦截配置",
     "label_en": "obj 02",
     "items": [
       {
         "type": "Object",
         "subType": "Object",
         "name": "obj_02",
-        "label": "子对象",
+        "label": "需拦截出车阈值",
         "label_en": "obj 02",
         "items": [
           {
             "type": "Boolean",
             "subType": "Switch",
             "name": "field_03",
-            "label": "布尔字段",
+            "label": "需签名提醒",
             "label_en": "boolean_03",
             "items": [],
             "required": false,
@@ -171,7 +203,7 @@ export const tempjson = [
         "config": {},
         "icon": "",
         "id": 1766381612863,
-        "active": false
+        "active": true
       },
       {
         "type": "DatePicker",
@@ -190,7 +222,7 @@ export const tempjson = [
         "config": {},
         "icon": "",
         "id": 1766381650598,
-        "active": true
+        "active": false
       }
     ],
     "required": false,
@@ -203,6 +235,6 @@ export const tempjson = [
     "config": {},
     "icon": "",
     "id": 1766381461524,
-    "active": true
+    "active": false
   }
 ];
