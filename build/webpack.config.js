@@ -73,7 +73,7 @@ module.exports = () => {
       mode: 'production',
       output: {
         ...webpack_config.output,
-        publicPath: "//luoxupan.github.io/", // 线上环境
+        publicPath: "//luoxupan.github.io/wiki/pages/webapp/", // 线上环境
       },
     }
     // webpack_config.plugins.push(new WorkboxWebpackPlugin.GenerateSW({
