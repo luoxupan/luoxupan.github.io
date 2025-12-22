@@ -9,7 +9,7 @@ export function WebApp() {
     <StateProvider>
       <ErrorBoundary>
         <div className="web-app">
-          <LayoutLeft />
+          {/* <LayoutLeft /> */}
           <div className="layout-main">
             <Outlet />
           </div>

@@ -3,6 +3,7 @@ import { WebApp } from "./WebApp";
 import { ErrorPage } from './pages/error-page';
 import { Options } from './components/index';
 import { IndexPage } from './pages/index';
+import { TemplatePage } from './pages/template';
 
 function LoadPage(props: any) {
   const { loader } = props;
@@ -28,12 +29,16 @@ export const router = [
         element: <IndexPage />,
       },
       {
-        path: "undoredo/",
+        path: "/undoredo",
         element: <LoadPage loader={() => import('./pages/TestPage')} />,
       },
       {
-        path: "options/",
+        path: "/options",
         element: <Options />,
+      },
+      {
+        path: "/template",
+        element: <TemplatePage />,
       },
     ],
   },

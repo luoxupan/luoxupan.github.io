@@ -1,0 +1,89 @@
+.fmp-schema-form {
+  .form-item-object {
+    display: block;
+    label .form-item-object-label {
+      color: black;
+      font-weight: 500;
+      font-size: 16px;
+      width: unset !important;
+    }
+  }
+  .ant-form-item .ant-form-item-label label {
+    width: 100%;
+    color: #5b6b73;
+    font-size: 15px;
+    height: auto;
+    .label{
+      width: 150px;
+      text-align: left;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      -webkit-hyphens: auto;
+      -ms-hyphens: auto;
+      hyphens: auto;
+      white-space: normal;
+      cursor: pointer;
+    }
+  }
+  .schema-normal-array, .schema-object-array {
+    padding: 16px;
+    margin-bottom: 15px;
+    border: 1px dashed #e8e8e8;
+    border-radius: 4px;
+    box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+  }
+  .schema-object {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px dashed #e8e8e8;
+    border-radius: 4px;
+    box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+  }
+  .ant-form-item-control {
+    flex: 1;
+  }
+  .fmp-image {
+    .fmp-image-replace-wrapper {
+      width: 280px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      height: 68px;
+      font-size: 12px;
+      .display-container {
+        position: relative;
+        flex: 1;
+        margin-left: 8px;
+        display: flex;
+        align-items: center;
+        height: 52px;
+        .file-name {
+          padding: 0 6px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 130px;
+          font-weight: 400;
+        }
+        .display-media {
+          width: 66px;
+          height: 48px;
+          border-radius: 2px;
+          overflow: hidden;
+          margin-right: 10px;
+          object-fit: cover;
+        }
+      }
+      .ant-upload-picture-card-wrapper {
+        width: unset;
+      }
+      .ant-upload-select-picture-card {
+        width: 60px;
+        height: 68px;
+        margin-right: unset;
+        margin-bottom: unset;
+        background: transparent;
+      }
+    }
+  }
+}

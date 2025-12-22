@@ -1,0 +1,98 @@
+.widget-form-item {
+  padding: 5px 20px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+  min-height: 60px;
+  display: flex;
+  position: relative;
+
+  .form-info {
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex: 1;
+
+    .form-label {
+      min-width: 140px;
+      flex-shrink: 0;
+    }
+
+    .form-field {
+      position: absolute;
+      top: -2px;
+      left: 4px;
+      color: #0098f0;
+      font-size: 12px;
+    }
+
+    .none-key {
+      color: red;
+    }
+  }
+
+  .delete {
+    color: #f5222d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -12px;
+    right: 5px;
+    background: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0 'hsl(0deg 0% 64% / 50%)';
+  }
+
+  .no-delete {
+    pointer-events: none;
+    color: #fff;
+    background-color: #F5F7FA;
+  }
+
+  .copy {
+    color: #f5222d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -12px;
+    right: 40px;
+    background: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0 'hsl(0deg 0% 64% / 50%)';
+  }
+
+  .must {
+    color: #f5222d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0 'hsl(0deg 0% 64% / 50%)';
+  }
+
+  .ant-form-item {
+    margin-bottom: unset;
+  }
+
+  .ant-col {
+    text-align: left;
+  }
+}
+
+.widget-form-item:hover {
+  background-color: #f3fdfc;
+}

@@ -11,7 +11,6 @@ export function IndexPage(props: any) {
 
   let location = useLocation();
   let [searchParams, setSearchParams] = useSearchParams();
-  // console.log('useSearchParams:', searchParams.get('id'));
   const { state, dispatch } = React.useContext(State);
   const [showName, setShowName] = React.useState(false);
   const [count, setCount] = React.useState(1);
