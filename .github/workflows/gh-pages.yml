@@ -42,7 +42,7 @@ jobs:
       - name: Build website
         run: |
           npm i
-          npm run build:prod
+          npm run build:pre
         working-directory: .
       - run: bash ./bash/generatehtml.sh
 
