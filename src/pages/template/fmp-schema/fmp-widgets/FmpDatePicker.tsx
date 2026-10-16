@@ -1,14 +1,15 @@
 import { DatePicker } from 'antd';
 import * as React from 'react';
-import moment from 'moment';
+import { toMoment } from '../utils';
 
 export function FmpDatePicker(props: any) {
-  const { value, onChange, showTime } = props;
+  // 模版里存的是字符串，而 Picker 只接受 moment 对象，这里统一转一次
+  const { value, onChange, showTime, defaultValue, ...rest } = props;
   return (
     <DatePicker
+      {...(rest as any)}
       showTime={showTime}
-      {...(props as any)}
-      value={value ? moment(value) : undefined}
+      value={toMoment(value)}
       onChange={(date, dateString) => {
         onChange(dateString);
       }} />

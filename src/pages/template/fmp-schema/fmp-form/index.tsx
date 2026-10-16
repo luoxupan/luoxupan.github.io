@@ -94,7 +94,6 @@ export function renderItems(schema: any, disabled: any, count: any) {
 
 export const FmpForm = React.forwardRef((props: any, ref: any) => {
   let { schema, disabled, data, getRestItems } = props;
-  console.log(data, 'datadatadata')
   const gridRef = React.useRef<any>(null);
   //处理滚动事件
   const handleScroll = (e: Event, stand: number) => {

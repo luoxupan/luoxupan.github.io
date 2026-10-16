@@ -64,19 +64,16 @@ const WidgetFormItem = React.forwardRef((props: any, ref: any) => {
   }
 
   const TypeForm = getSubType(type, subType);
+  // 组件配置里的默认值只用来给中间预览区展示，不能挂到共享的 editorProps 上
+  // （否则同类型的其它卡片会一起被改掉）
+  const editorProps = TypeForm?.editorProps;
+  const editorValue = !config ? defaultData : config?.defaultValue;
 
   const setCardActive = (cards: any, index: any) => {
     const _cards = [...cards];
     _cards.forEach((item) => item.active = false);
     _cards[index].active = true;
     setCards(_cards);
-  }
-
-  if (TypeForm?.editorProps) {
-    //input,inputNumber输入框
-    TypeForm.editorProps.value = !config ? defaultData : config?.defaultValue
-    //switch开关
-    TypeForm.editorProps.checked = !config ? defaultData : config?.defaultValue
   }
 
   return (
@@ -110,10 +107,10 @@ const WidgetFormItem = React.forwardRef((props: any, ref: any) => {
           {
             TypeForm?.EditorComponent &&
             <TypeForm.EditorComponent
-              value={true}
+              {...editorProps}
               {...config}
               {...formData}
-              {...TypeForm.editorProps}
+              value={editorProps ? editorValue : true}
               index={index}
               path={path}
               setPath={setPath}

@@ -1,4 +1,4 @@
-import { Input, InputNumber, Switch, DatePicker, TimePicker } from 'antd';
+import { Input, InputNumber, Switch } from 'antd';
 import { FmpRadio } from './fmp-widgets/FmpRadio';
 import { FmpDatePicker } from './fmp-widgets/FmpDatePicker';
 import { FmpTimePicker } from './fmp-widgets/FmpTimePicker';
@@ -23,6 +23,8 @@ import EditorRadio from './editor-widgets/EditorRadio';
 import EditorImage from './editor-widgets/EditorImage';
 import EditorText from './editor-widgets/EditorText';
 import EditorUniID from './editor-widgets/EditorUniID';
+import EditorDatePicker from './editor-widgets/EditorDatePicker';
+import EditorTimePicker from './editor-widgets/EditorTimePicker';
 import BaseFieldModel from './editor-model/base-field';
 import BaseModel from './editor-model/base';
 
@@ -148,7 +150,7 @@ const base: any = {
     ]
   },
   DatePicker: {
-    EditorComponent: DatePicker,
+    EditorComponent: EditorDatePicker,
     SchemaComponent: FmpDatePicker,
     editorProps: {
       style: {
@@ -161,7 +163,7 @@ const base: any = {
     ]
   },
   DatePickerShowTime: {
-    EditorComponent: DatePicker,
+    EditorComponent: EditorDatePicker,
     SchemaComponent: FmpDatePicker,
     editorProps: {
       style: {
@@ -178,7 +180,7 @@ const base: any = {
     ]
   },
   TimePicker: {
-    EditorComponent: TimePicker,
+    EditorComponent: EditorTimePicker,
     SchemaComponent: FmpTimePicker,
     editorProps: {
       style: {

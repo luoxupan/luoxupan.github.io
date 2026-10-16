@@ -1,5 +1,44 @@
 import * as React from 'react';
 import { Modal, notification } from 'antd';
+import * as moment from 'moment';
+
+/**
+ * 把模版里存的值安全地转成 moment 对象
+ *
+ * antd 的 DatePicker/TimePicker 只接受 moment 对象，而模版里存的是字符串
+ * （例如 '2022-01-01'），切换组件类型时还可能带上其它类型的默认值（例如 true），
+ * 直接交给 Picker 就会报 `date.clone is not a function`。
+ * 这里统一做一次转换，转不出来就返回 undefined，让 Picker 展示占位符。
+ *
+ * @param value   模版里的值：字符串 / 时间戳 / Date / moment
+ * @param formats 优先使用的严格解析格式（TimePicker 用），解析失败会退化成通用解析
+ */
+export const toMoment = (value: any, formats?: any): any => {
+  if (value === undefined || value === null || value === '' || typeof value === 'boolean') {
+    return undefined;
+  }
+
+  if (moment.isMoment(value)) {
+    return value.isValid() ? value : undefined;
+  }
+
+  // 只认字符串、时间戳和 Date，object 之类的非法值直接忽略
+  // （moment({}) 会取当前时间，会把脏数据变成“今天”）
+  const isDate = value instanceof Date;
+  if (typeof value !== 'string' && typeof value !== 'number' && !isDate) {
+    return undefined;
+  }
+
+  if (typeof value === 'string' && formats) {
+    const parsed = moment(value, formats, true);
+    if (parsed.isValid()) {
+      return parsed;
+    }
+  }
+
+  const date = moment(value);
+  return date.isValid() ? date : undefined;
+};
 
 // 将联动组件的对象数组打平
   const tieLinkage = (schema: any, version?: any) => {
