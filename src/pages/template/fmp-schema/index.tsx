@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Radio, message } from 'antd';
+import { TableOutlined, CodeOutlined } from '@ant-design/icons';
 import './index.less';
 import WidgetFormItem from './core/WidgetFormItem';
 import WidgetEditorForm from './core/WidgetEditorForm';
@@ -184,21 +185,22 @@ export const Template = React.forwardRef((props: any, ref: any) => {
   return (
     <div className='editor-contain'>
       <Radio.Group
+        className='editor-mode-switch'
         value={type}
-        style={{
-          flexDirection: 'column',
-          display: 'flex',
-          flexShrink: 0,
-          marginRight: 5
-        }}
         onChange={({ target }) => {
           setType(target.value);
           if (target.value === 2) {
             eleRef.current.setValue(cards);
           }
         }}>
-        <Radio.Button value={1}>View Edit</Radio.Button>
-        <Radio.Button value={2}>Source Edit</Radio.Button>
+        <Radio.Button value={1}>
+          <TableOutlined />
+          可视化编辑
+        </Radio.Button>
+        <Radio.Button value={2}>
+          <CodeOutlined />
+          源码编辑
+        </Radio.Button>
       </Radio.Group>
       {main}
       <div className='edit-source' style={{ display: type === 1 ? 'none' : '' }}>
