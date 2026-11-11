@@ -1,5 +1,6 @@
 import "./index.less";
 import * as React from "react";
+import "virtual:svg-icons-register";
 /**
  * name svg文件名字
  */
@@ -12,10 +13,6 @@ interface Props {
 export function SvgIcon(props: Props) {
 
   const { name, style } = props;
-
-  React.useEffect(() => {
-    name && require(`../../assets/svg/${name}.svg`);
-  }, [name]);
 
   return (
     <svg className="svg-icon" style={{ ...style }}>

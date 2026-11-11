@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Modal, notification } from 'antd';
-import * as moment from 'moment';
+import moment from 'moment';
 
 /**
  * 把模版里存的值安全地转成 moment 对象
