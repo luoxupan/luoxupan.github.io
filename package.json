@@ -23,6 +23,7 @@
   "homepage": "https://github.com/luoxupan/wiki#readme",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@types/three": "^0.187.0",
     "antd": "^4.23.1",
     "axios": "^0.27.2",
     "css-line-break": "^2.1.0",
@@ -34,7 +35,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.1",
     "rrweb": "^2.0.0-alpha.4",
-    "text-segmentation": "^1.0.3"
+    "text-segmentation": "^1.0.3",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.21",
