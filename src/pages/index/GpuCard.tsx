@@ -11,7 +11,7 @@ const MODEL_URL = `${import.meta.env.BASE_URL}models/gltf/gpu_card.glb`;
 const FAN_ANIMATION_NAME = "GPU_Fans_Spin_Loop";
 /** 模型归一化后的最大边长，用于保证不同模型都能装进同一视角 */
 const TARGET_SIZE = 4;
-const BACKGROUND_COLOR = 0x0d1014;
+const BACKGROUND_COLOR = 0xf0f0f0;
 
 /** 释放 GLTF 场景里的几何体、材质与贴图，避免切换页面时显存泄漏 */
 function disposeObjectTree(root: THREE.Object3D) {

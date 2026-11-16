@@ -1,8 +1,92 @@
-.three-scene {
-  position: relative;
+// ============ 左右两栏布局 ============
+.demo-layout {
+  display: flex;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background: #f0f0f0;
+}
+
+.demo-layout__sidebar {
+  flex: 0 0 240px;
+  width: 240px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 20px 12px;
+  overflow-y: auto;
+  background: #ffffff;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.demo-layout__sidebar-title {
+  padding: 0 12px 16px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.demo-layout__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demo-layout__list-item + .demo-layout__list-item {
+  margin-top: 4px;
+}
+
+.demo-layout__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.78);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &.is-active {
+    background: #eff6ff;
+    border-color: rgba(59, 130, 246, 0.5);
+    color: #1d4ed8;
+  }
+}
+
+.demo-layout__item-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.demo-layout__item-desc {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+}
+
+.demo-layout__content {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+// ============ 3D 场景容器 ============
+.three-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f0f0f0;
 
   canvas {
     display: block;
@@ -12,19 +96,19 @@
 .three-scene-gpu-card {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 38%, #1b2230 0%, #0d1014 72%);
+  background: #f0f0f0;
 
   canvas {
     display: block;
   }
 
   .three-scene-status {
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(0, 0, 0, 0.65);
 
     &.is-error {
-      color: #ff6b6b;
+      color: #d0021b;
     }
   }
 }
@@ -37,9 +121,10 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 999px;
-  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
+  color: rgba(0, 0, 0, 0.6);
   font-size: 11px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   letter-spacing: 0.3px;
@@ -73,11 +158,13 @@
   bottom: 22px;
   transform: translateX(-50%);
   padding: 4px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 999px;
-  color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.7);
+  color: rgba(0, 0, 0, 0.5);
   font-size: 12px;
   letter-spacing: 0.4px;
+  white-space: nowrap;
   user-select: none;
   pointer-events: none;
   backdrop-filter: blur(6px);
