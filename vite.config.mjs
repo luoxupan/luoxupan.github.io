@@ -7,6 +7,7 @@ const bases = {
   test: '//luoxupan.github.io/',
   pre: '//luoxupan.github.io/',
   production: '//luoxupan.github.io/wiki/pages/webapp/',
+  threejs: '//luoxupan.github.io/wiki/pages/threejs/',
 };
 
 export default defineConfig(({ mode }) => ({

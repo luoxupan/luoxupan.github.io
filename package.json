@@ -8,6 +8,7 @@
     "build:test": "vite build --mode test",
     "build:pre": "vite build --mode pre",
     "build:prod": "vite build --mode production",
+    "build:threejs": "vite build --mode threejs",
     "watch": "vite build --watch --mode development",
     "serve": "vite --mode development"
   },
