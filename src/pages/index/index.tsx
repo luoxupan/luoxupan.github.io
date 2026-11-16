@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useSearchParams } from "react-router-dom";
 import { GpuCard } from "./GpuCard";
 import { ChromeScene } from "./ChromeScene";
 import { KiraScene } from "./KiraScene";
@@ -18,10 +19,16 @@ const demos: Demo[] = [
   { key: "kira-scene", label: "KiraScene", description: "GLTF 角色 IK 交互", Component: KiraScene },
 ];
 
-export function IndexPage(): React.ReactElement {
-  const [activeKey, setActiveKey] = React.useState<string>(demos[0].key);
+/** URL 参数名，例如 /#/?curActiveKey=gpu-card */
+const DEMO_PARAM = "curActiveKey";
 
-  const activeDemo = demos.find((demo) => demo.key === activeKey) ?? demos[0];
+export function IndexPage(): React.ReactElement {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // 以 URL 为唯一数据源：刷新、分享链接、浏览器前进/后退都会自动同步
+  const keyFromUrl = searchParams.get(DEMO_PARAM);
+  const activeDemo = demos.find((demo) => demo.key === keyFromUrl) ?? demos[0];
+  const activeKey = activeDemo.key;
   const ActiveComponent = activeDemo.Component;
 
   return (
@@ -38,7 +45,7 @@ export function IndexPage(): React.ReactElement {
                     ? "demo-layout__item is-active"
                     : "demo-layout__item"
                 }
-                onClick={() => setActiveKey(demo.key)}
+                onClick={() => setSearchParams({ [DEMO_PARAM]: demo.key })}
               >
                 <span className="demo-layout__item-label">{demo.label}</span>
                 <span className="demo-layout__item-desc">{demo.description}</span>
