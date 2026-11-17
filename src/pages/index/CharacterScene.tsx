@@ -13,6 +13,12 @@ const MODEL_URL = "https://luoxupan.github.io/big-file/glb/renwu.glb";
 const TARGET_SIZE = 3.2;
 const BACKGROUND_COLOR = 0xf0f0f0;
 
+/**
+ * 半透明衣料的网格名（这 6 个网格共用 glb 里的 body02 材质）。
+ * 它们的 depthWrite 需要单独打开，见 model.traverse 里的说明。
+ */
+const CLOTH_MESHES = new Set(["body02", "body03", "body04", "cloth01", "cloth02", "cloth03"]);
+
 export function CharacterScene(): React.ReactElement {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -66,16 +72,22 @@ export function CharacterScene(): React.ReactElement {
     const hairMaterials: { material: THREE.MeshStandardMaterial; part: "hair" | "scalp" }[] = [];
 
     /**
-     * 把头发贴图改写成「灰度 + 原 alpha」，颜色统一交给 material.color 控制。
+     * 把头发贴图改写成「灰度 + 原 alpha 形状」，颜色统一交给 material.color 控制。
      *
      * 为什么不能只改 material.color：
      * - hair 材质的 baseColor 是一张发丝 ID 彩图（青/紫/黄细线混杂），直接乘颜色会得到脏彩虹色；
      * - scalp 贴图不透明像素的平均亮度只有 0.095（最亮 0.28），乘任何颜色都还是接近黑色，
      *   所以「银白」「亚麻棕」这类浅色根本染不出来。
      * 两张图都按自身最大亮度归一化成灰度，既保住发丝层次，又让灰度上限到 1.0，
-     * 任意亮度的颜色都能还原；alpha 原样保留，头发靠它镂空，不能动。
+     * 任意亮度的颜色都能还原。
+     *
+     * alpha 只改「浓淡」不改形状：发丝本身的透射率只有 0.2~0.3，
+     * 深色会被浅背景透上来冲成灰白，所以用 gamma < 1 提浓，头发才立得住。
+     *
+     * @param floor 灰度的下限，控制发丝最暗处有多暗（越小层次越强）
+     * @param alphaGamma alpha 的 gamma 值，1 表示原样，<1 表示提浓
      */
-    function neutralizeHairTexture(texture: THREE.Texture | null, floor: number) {
+    function neutralizeHairTexture(texture: THREE.Texture | null, floor: number, alphaGamma = 1) {
       const image = texture?.image as (HTMLImageElement & ImageBitmap) | undefined;
       const width = image?.width ?? 0;
       const height = image?.height ?? 0;
@@ -108,6 +120,10 @@ export function CharacterScene(): React.ReactElement {
           data[i] = value;
           data[i + 1] = value;
           data[i + 2] = value;
+
+          if (alphaGamma !== 1 && data[i + 3] > 0) {
+            data[i + 3] = Math.round(255 * Math.pow(data[i + 3] / 255, alphaGamma));
+          }
         }
 
         context.putImageData(imageData, 0, 0);
@@ -118,6 +134,26 @@ export function CharacterScene(): React.ReactElement {
 
       texture.image = canvas;
       texture.needsUpdate = true;
+    }
+
+    /**
+     * 换色前先修掉 glb 自带的高光参数。
+     *
+     * hair 材质带着 KHR_materials_specular（specularColorFactor 1.5）和 clearcoat(1.45)，
+     * 相当于在发丝上糊了一层白高光：实测染成 #16161a 也会显示成灰白色；
+     * scalp 没写 metallicFactor，glTF 默认值 1.0，等于一根金属发根。
+     * 这里只做一次归一化（clearcoat 变化会触发一次 shader 重编译），之后换色只改 uniform。
+     */
+    function normalizeHairMaterial(material: THREE.MeshStandardMaterial) {
+      material.metalness = 0.05;
+      material.roughness = 0.5;
+
+      const physical = material as THREE.MeshPhysicalMaterial;
+      if (physical.isMeshPhysicalMaterial) {
+        physical.clearcoat = 0;
+        physical.specularIntensity = 0.3;
+        physical.needsUpdate = true;
+      }
     }
 
     /** 应用头发颜色：发丝和发根一起改，否则头顶会露出原来的深色 */
@@ -258,12 +294,32 @@ export function CharacterScene(): React.ReactElement {
         const hairPart: "hair" | "scalp" | null =
           mesh.name === "hair" || mesh.name === "scalp" ? mesh.name : null;
 
+        // 发丝必须排在所有衣服之后绘制。
+        //
+        // hair 和裙子的材质都是 alphaMode: BLEND（transparent），three 只按“整个对象”的距离
+        // 做背到前排序，两个网格中心点差不多近时顺序会随相机翻转：衣服后画就把发丝盖成半透明，
+        // 发丝后画就把头发直接糊在布料上——这就是“有时候头发渲染在衣服里面”的来源。
+        // 给发丝一个更大的 renderOrder，顺序就固定了（衣服在前、发丝在后）。
+        if (mesh.name === "hair") {
+          mesh.renderOrder = 1;
+        }
+
         const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
         materials.forEach((material) => {
           const standard = material as THREE.MeshStandardMaterial;
           if (!standard.isMeshStandardMaterial) return;
           standard.envMapIntensity = 0.7;
           standard.needsUpdate = true;
+
+          // 衣服（body02/03/04、cloth01/02/03 共用 body02 材质）要打开深度写入。
+          //
+          // GLTFLoader 给 BLEND 材质的 depthWrite 默认是 false，于是裙子完全不参与深度测试：
+          // 发丝排到后面画之后，裙子挡不住任何东西，头发会从前襟/后背“穿”到正面来
+          // （正面能看到后脑勺那一大团头发就是这么来的）。写深度后，布料后面的发丝会被
+          // 深度测试剔除，布料前面的发丝照常叠加，前后关系才真正由几何决定。
+          if (CLOTH_MESHES.has(mesh.name) && standard.transparent) {
+            standard.depthWrite = true;
+          }
 
           if (hairPart && !hairMaterials.some((item) => item.material === standard)) {
             hairMaterials.push({ material: standard, part: hairPart });
@@ -273,8 +329,10 @@ export function CharacterScene(): React.ReactElement {
 
       // 头发贴图预处理 + 上默认色（放在遍历之后，此时材质已收集齐）
       hairMaterials.forEach(({ material, part }) => {
-        // 发丝保留更多层次（floor 低一些），发根稍亮一点才不会像一块黑布
-        neutralizeHairTexture(material.map, part === "scalp" ? 0.58 : 0.62);
+        // 发丝保留更多层次（floor 低一些），发根稍亮一点才不会像一块黑布；
+        // alpha 用 gamma 提浓，否则 0.2~0.3 的透射率会把深色头发冲成灰白
+        neutralizeHairTexture(material.map, part === "scalp" ? 0.58 : 0.62, part === "scalp" ? 1 : 0.5);
+        normalizeHairMaterial(material);
       });
       applyHairColor(conf.hairColor);
 
@@ -385,7 +443,7 @@ export function CharacterScene(): React.ReactElement {
           });
         hairFolder
           .add(conf, "hairPreset", Object.keys(HAIR_PRESETS))
-          .name("头发颜色预设")
+          .name("颜色预设")
           .onChange((name: string) => {
             const preset = HAIR_PRESETS[name];
             if (!preset) return;
