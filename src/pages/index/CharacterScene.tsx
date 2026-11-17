@@ -41,6 +41,8 @@ export function CharacterScene(): React.ReactElement {
     /** lil-gui 绑定的参数对象 */
     const conf = {
       playAnimation: true,
+      hairColor: "#3b2a1f",
+      hairPreset: "深棕（默认）",
       autoRotate: true,
       rotateSpeed: 0.8,
       keyIntensity: 2.2,
@@ -48,6 +50,82 @@ export function CharacterScene(): React.ReactElement {
       zoomOut: () => {},
       resetView: () => {},
     };
+
+    /** 头发颜色预设：换色按钮直接用这些值 */
+    const HAIR_PRESETS: Record<string, string> = {
+      "深棕（默认）": "#3b2a1f",
+      冷黑: "#16161a",
+      亚麻棕: "#8a6444",
+      酒红: "#6d1f2b",
+      雾蓝: "#2f4a6d",
+      樱花粉: "#c9798f",
+      银白: "#cfd2d6",
+    };
+
+    /** 参与染色的材质（hair 发丝 + scalp 发根），同一材质只收一次 */
+    const hairMaterials: { material: THREE.MeshStandardMaterial; part: "hair" | "scalp" }[] = [];
+
+    /**
+     * 把头发贴图改写成「灰度 + 原 alpha」，颜色统一交给 material.color 控制。
+     *
+     * 为什么不能只改 material.color：
+     * - hair 材质的 baseColor 是一张发丝 ID 彩图（青/紫/黄细线混杂），直接乘颜色会得到脏彩虹色；
+     * - scalp 贴图不透明像素的平均亮度只有 0.095（最亮 0.28），乘任何颜色都还是接近黑色，
+     *   所以「银白」「亚麻棕」这类浅色根本染不出来。
+     * 两张图都按自身最大亮度归一化成灰度，既保住发丝层次，又让灰度上限到 1.0，
+     * 任意亮度的颜色都能还原；alpha 原样保留，头发靠它镂空，不能动。
+     */
+    function neutralizeHairTexture(texture: THREE.Texture | null, floor: number) {
+      const image = texture?.image as (HTMLImageElement & ImageBitmap) | undefined;
+      const width = image?.width ?? 0;
+      const height = image?.height ?? 0;
+      if (!texture || !image || !width || !height) return;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return;
+
+      try {
+        context.drawImage(image as CanvasImageSource, 0, 0, width, height);
+        const imageData = context.getImageData(0, 0, width, height);
+        const { data } = imageData;
+
+        // 先找不透明像素里的最大亮度，用它归一化
+        let maxLum = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i + 3] < 8) continue;
+          const lum = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+          if (lum > maxLum) maxLum = lum;
+        }
+        if (maxLum < 1) return;
+
+        // 灰度映射到 [floor, 1]：floor 保住发丝明暗层次，上限 1 保住染色亮度
+        for (let i = 0; i < data.length; i += 4) {
+          const lum = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / maxLum;
+          const value = Math.round(255 * (floor + (1 - floor) * Math.min(1, lum)));
+          data[i] = value;
+          data[i + 1] = value;
+          data[i + 2] = value;
+        }
+
+        context.putImageData(imageData, 0, 0);
+      } catch {
+        // 贴图跨域时 getImageData 会抛 SecurityError，此时降级为「只乘颜色」
+        return;
+      }
+
+      texture.image = canvas;
+      texture.needsUpdate = true;
+    }
+
+    /** 应用头发颜色：发丝和发根一起改，否则头顶会露出原来的深色 */
+    function applyHairColor(color: string) {
+      hairMaterials.forEach(({ material }) => {
+        material.color.set(color);
+      });
+    }
 
     /** 每次点击缩放的比例（<1 是推近，取倒数即拉远） */
     const ZOOM_STEP = 0.8;
@@ -176,14 +254,29 @@ export function CharacterScene(): React.ReactElement {
           mesh.frustumCulled = false;
         }
 
+        // 这个模型里头发是 hair（发丝卡片）+ scalp（头皮/发根）两个网格，染色要一起做
+        const hairPart: "hair" | "scalp" | null =
+          mesh.name === "hair" || mesh.name === "scalp" ? mesh.name : null;
+
         const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
         materials.forEach((material) => {
           const standard = material as THREE.MeshStandardMaterial;
           if (!standard.isMeshStandardMaterial) return;
           standard.envMapIntensity = 0.7;
           standard.needsUpdate = true;
+
+          if (hairPart && !hairMaterials.some((item) => item.material === standard)) {
+            hairMaterials.push({ material: standard, part: hairPart });
+          }
         });
       });
+
+      // 头发贴图预处理 + 上默认色（放在遍历之后，此时材质已收集齐）
+      hairMaterials.forEach(({ material, part }) => {
+        // 发丝保留更多层次（floor 低一些），发根稍亮一点才不会像一块黑布
+        neutralizeHairTexture(material.map, part === "scalp" ? 0.58 : 0.62);
+      });
+      applyHairColor(conf.hairColor);
 
       // 6. 灯光：主光带阴影 + 侧补光 + 轮廓光
       const framedBounds = new THREE.Box3().setFromObject(pivot);
@@ -280,6 +373,26 @@ export function CharacterScene(): React.ReactElement {
           .name("动画播放")
           .onChange((value: boolean) => {
             if (action) action.paused = !value;
+          });
+      }
+      if (hairMaterials.length > 0) {
+        const hairFolder = gui.addFolder("头发");
+        hairFolder
+          .addColor(conf, "hairColor")
+          .name("头发颜色")
+          .onChange((value: string) => {
+            applyHairColor(value);
+          });
+        hairFolder
+          .add(conf, "hairPreset", Object.keys(HAIR_PRESETS))
+          .name("头发颜色预设")
+          .onChange((name: string) => {
+            const preset = HAIR_PRESETS[name];
+            if (!preset) return;
+            conf.hairColor = preset;
+            applyHairColor(preset);
+            // 预设改的是 conf.hairColor，取色器控件要手动刷新才会显示新颜色
+            hairFolder.controllers.forEach((controller) => controller.updateDisplay());
           });
       }
       gui
