@@ -2,6 +2,8 @@ import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { createRenderer, disposeObjectTree, releaseRenderer } from "./webgl";
 import { loadGLTF } from "./glb";
@@ -9,7 +11,7 @@ import { SceneLoading } from "./SceneLoading";
 import './index.less';
 
 /** 人物模型地址（远程托管，避免大文件占用 GitHub 仓库） */
-const MODEL_URL = "https://luoxupan.github.io/big-file/glb/renwu.glb";
+const MODEL_URL = "https://luoxupan.github.io/big-file/glb/renwu-compress.glb";
 /** 归一化后的最大边长，人物模型即身高 */
 const TARGET_SIZE = 3.2;
 const BACKGROUND_COLOR = 0xf0f0f0;
@@ -39,6 +41,7 @@ export function CharacterScene(): React.ReactElement {
     let envRenderTarget: THREE.WebGLRenderTarget | undefined;
     let model: THREE.Object3D | undefined;
     let mixer: THREE.AnimationMixer | undefined;
+    let dracoLoader: DRACOLoader | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let gui: GUI | undefined;
     /** 初始取景，重置视角时回到这里 */
@@ -241,16 +244,34 @@ export function CharacterScene(): React.ReactElement {
       scene.environment = envRenderTarget.texture;
       pmremGenerator.dispose();
 
-      // 4. 加载人物模型（58MB、20 张大贴图，统一加载器给出下载进度）
+      // 4. 加载人物模型（Draco 压缩、20 张大贴图，统一加载器给出下载进度）
+      //
+      // 模型是 Draco 压缩过的 glb，必须先给 GLTFLoader 挂 DRACOLoader，
+      // 否则解析阶段会直接报「未提供 DRACOLoader 实例」。
+      // 解码器放在 public/draco/gltf/ 下自托管，和 KiraScene 共用同一份 wasm，
+      // 走 BASE_URL 才能兼容 GitHub Pages 的子路径部署。
+      dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}draco/gltf/`);
+
+      const gltfLoader = new GLTFLoader();
+      gltfLoader.setDRACOLoader(dracoLoader);
+
       const gltf = await loadGLTF(MODEL_URL, {
+        loader: gltfLoader,
         onProgress: setProgress,
         isCancelled: () => cancelled,
       });
 
       if (cancelled) {
         disposeObjectTree(gltf.scene);
+        dracoLoader.dispose();
+        dracoLoader = undefined;
         return;
       }
+
+      // 解压已经完成，解码器实例不再需要（wasm 模块卸载，释放内存）
+      dracoLoader.dispose();
+      dracoLoader = undefined;
 
       // 5. 归一化：居中 + 缩放到统一尺寸
       model = gltf.scene;
@@ -520,6 +541,8 @@ export function CharacterScene(): React.ReactElement {
 
       controls?.dispose();
       gui?.destroy();
+      dracoLoader?.dispose();
+      dracoLoader = undefined;
 
       mixer?.stopAllAction();
       if (mixer && model) {
