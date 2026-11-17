@@ -204,6 +204,53 @@
   }
 }
 
+.three-scene-status__text {
+  letter-spacing: 0.2px;
+}
+
+// ============ 加载进度条（0% → 100%） ============
+.three-scene-progress {
+  position: relative;
+  width: 220px;
+  height: 6px;
+  margin: 12px auto 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.three-scene-progress__bar {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f76a31, #ffa24d);
+  box-shadow: 0 0 8px rgba(247, 106, 49, 0.5);
+  // 真实进度是一小段一小段来的，缓动一下看起来才连贯
+  transition: width 0.25s ease;
+}
+
+.three-scene-status__percent {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.6px;
+}
+
+// 外网加载提示：橙色高亮，和进度条同色系
+.three-scene-status__tip {
+  display: inline-block;
+  max-width: 320px;
+  margin-top: 14px;
+  padding: 6px 12px;
+  border: 1px solid rgba(247, 106, 49, 0.22);
+  border-radius: 8px;
+  background: rgba(247, 106, 49, 0.1);
+  color: #e2591c;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.2px;
+}
+
 // ============ lil-gui 面板定位（右上角） ============
 // lil-gui 默认 fixed 贴视口右上角，这里改为相对场景容器定位，避免与其他示例的 GUI 重叠
 .three-scene-gpu-card .lil-gui.root,

@@ -1,10 +1,11 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { createRenderer, disposeObjectTree, releaseRenderer } from "./webgl";
+import { loadGLTF } from "./glb";
+import { SceneLoading } from "./SceneLoading";
 import './index.less';
 
 /** 人物模型地址（远程托管，避免大文件占用 GitHub 仓库） */
@@ -240,21 +241,11 @@ export function CharacterScene(): React.ReactElement {
       scene.environment = envRenderTarget.texture;
       pmremGenerator.dispose();
 
-      // 4. 加载人物模型（58MB、20 张大贴图，需要进度反馈）
-      const loader = new GLTFLoader();
-      const gltf = await new Promise<Awaited<ReturnType<GLTFLoader["loadAsync"]>>>(
-        (resolve, reject) => {
-          loader.load(
-            MODEL_URL,
-            resolve,
-            (event) => {
-              if (cancelled || !event.total) return;
-              setProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
-            },
-            reject
-          );
-        }
-      );
+      // 4. 加载人物模型（58MB、20 张大贴图，统一加载器给出下载进度）
+      const gltf = await loadGLTF(MODEL_URL, {
+        onProgress: setProgress,
+        isCancelled: () => cancelled,
+      });
 
       if (cancelled) {
         disposeObjectTree(gltf.scene);
@@ -555,9 +546,7 @@ export function CharacterScene(): React.ReactElement {
       )}
       <div className="three-scene-hint">拖拽旋转 · 滚轮缩放</div>
       {(isLoading || error) && (
-        <div className={error ? "three-scene-status is-error" : "three-scene-status"}>
-          {error || `正在加载人物模型... ${progress}%`}
-        </div>
+        <SceneLoading label="正在加载人物模型..." progress={progress} error={error} />
       )}
     </div>
   );

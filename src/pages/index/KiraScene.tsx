@@ -8,6 +8,8 @@ import { CCDIKSolver, CCDIKHelper } from "three/examples/jsm/animation/CCDIKSolv
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { createRenderer, disposeObjectTree, releaseRenderer } from "./webgl";
+import { loadGLTF } from "./glb";
+import { SceneLoading } from "./SceneLoading";
 import './index.less';
 
 type SceneObjects = {
@@ -23,6 +25,7 @@ type SceneObjects = {
 export function KiraScene(): React.ReactElement {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [progress, setProgress] = React.useState(0);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -73,7 +76,11 @@ export function KiraScene(): React.ReactElement {
       const gltfLoader = new GLTFLoader();
       gltfLoader.setDRACOLoader(dracoLoader);
 
-      const gltf = await gltfLoader.loadAsync(`${import.meta.env.BASE_URL}models/gltf/kira.glb`);
+      const gltf = await loadGLTF(`${import.meta.env.BASE_URL}models/gltf/kira.glb`, {
+        loader: gltfLoader,
+        onProgress: setProgress,
+        isCancelled: () => cancelled,
+      });
       if (cancelled) {
         disposeObjectTree(gltf.scene);
         dracoLoader.dispose();
@@ -261,9 +268,7 @@ export function KiraScene(): React.ReactElement {
   return (
     <div className="three-scene" ref={containerRef}>
       {(isLoading || error) && (
-        <div className={error ? "three-scene-status is-error" : "three-scene-status"}>
-          {error || "正在加载 Three.js IK 场景..."}
-        </div>
+        <SceneLoading label="正在加载 Kira 角色模型..." progress={progress} error={error} />
       )}
     </div>
   );

@@ -1,10 +1,11 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { createRenderer, disposeObjectTree, releaseRenderer } from "./webgl";
+import { loadGLTF } from "./glb";
+import { SceneLoading } from "./SceneLoading";
 import './index.less';
 
 /** 显卡模型地址（放在 public/models/gltf 下，构建后按 BASE_URL 直接访问） */
@@ -18,10 +19,13 @@ const BACKGROUND_COLOR = 0xf0f0f0;
 /** 控制面板默认值，重置时回到这里 */
 const DEFAULT_MODEL_COLOR = "#ffffff";
 const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
+/** 进度条最少停留时长：模型只有 100+KB，不加这个会一闪而过看不到进度 */
+const MIN_LOADING_MS = 620;
 
 export function GpuCard(): React.ReactElement {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [progress, setProgress] = React.useState(0);
   const [error, setError] = React.useState<string | null>(null);
   const [animationName, setAnimationName] = React.useState<string | null>(null);
 
@@ -29,6 +33,7 @@ export function GpuCard(): React.ReactElement {
     const container = containerRef.current;
     if (!container) return;
 
+    const startedAt = Date.now();
     let cancelled = false;
     let scene: THREE.Scene | undefined;
     let camera: THREE.PerspectiveCamera | undefined;
@@ -104,9 +109,11 @@ export function GpuCard(): React.ReactElement {
       scene.environment = envRenderTarget.texture;
       pmremGenerator.dispose();
 
-      // 4. 加载 GPU 显卡模型
-      const loader = new GLTFLoader();
-      const gltf = await loader.loadAsync(MODEL_URL);
+      // 4. 加载 GPU 显卡模型（统一加载器，带下载进度）
+      const gltf = await loadGLTF(MODEL_URL, {
+        onProgress: setProgress,
+        isCancelled: () => cancelled,
+      });
 
       if (cancelled) {
         disposeObjectTree(gltf.scene);
@@ -259,6 +266,9 @@ export function GpuCard(): React.ReactElement {
 
       clock.start();
       renderer.setAnimationLoop(animate);
+
+      // 场景已经能出画面了，进度条补到 100%
+      setProgress(100);
     }
 
     function animate() {
@@ -285,6 +295,16 @@ export function GpuCard(): React.ReactElement {
     }
 
     init()
+      .then(async () => {
+        if (cancelled) return;
+
+        // 进度条至少露脸一小会儿；末尾再留 280ms 让 99% → 100% 的缓动走完再收起遮罩
+        const elapsed = Date.now() - startedAt;
+        const wait = Math.max(MIN_LOADING_MS - elapsed, 280);
+        await new Promise((resolve) => {
+          setTimeout(resolve, wait);
+        });
+      })
       .catch((loadError: unknown) => {
         if (cancelled) return;
         setError(loadError instanceof Error ? loadError.message : "GPU 模型加载失败");
@@ -329,9 +349,7 @@ export function GpuCard(): React.ReactElement {
       )}
       <div className="three-scene-hint">拖拽旋转 · 滚轮缩放</div>
       {(isLoading || error) && (
-        <div className={error ? "three-scene-status is-error" : "three-scene-status"}>
-          {error || "正在加载 GPU 显卡模型..."}
-        </div>
+        <SceneLoading label="正在加载 GPU 显卡模型..." progress={progress} error={error} />
       )}
     </div>
   );
