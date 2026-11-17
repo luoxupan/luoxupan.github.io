@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import './index.less';
 
 /** 显卡模型地址（放在 public/models/gltf 下，构建后按 BASE_URL 直接访问） */
@@ -12,6 +13,10 @@ const FAN_ANIMATION_NAME = "GPU_Fans_Spin_Loop";
 /** 模型归一化后的最大边长，用于保证不同模型都能装进同一视角 */
 const TARGET_SIZE = 4;
 const BACKGROUND_COLOR = 0xf0f0f0;
+
+/** 控制面板默认值，重置时回到这里 */
+const DEFAULT_MODEL_COLOR = "#ffffff";
+const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
 
 /** 释放 GLTF 场景里的几何体、材质与贴图，避免切换页面时显存泄漏 */
 function disposeObjectTree(root: THREE.Object3D) {
@@ -57,7 +62,17 @@ export function GpuCard(): React.ReactElement {
     let envRenderTarget: THREE.WebGLRenderTarget | undefined;
     let model: THREE.Object3D | undefined;
     let resizeObserver: ResizeObserver | undefined;
+    let gui: GUI | undefined;
     const clock = new THREE.Clock();
+
+    /** lil-gui 绑定的参数对象：面板直接改这里，再由 onChange 应用到场景 */
+    const conf = {
+      color: DEFAULT_MODEL_COLOR,
+      x: DEFAULT_POSITION.x,
+      y: DEFAULT_POSITION.y,
+      z: DEFAULT_POSITION.z,
+      reset: () => {},
+    };
 
     /** 根据模型包围球自动摆放相机，保证完整入画 */
     function frameCamera(bounds: THREE.Box3) {
@@ -139,6 +154,9 @@ export function GpuCard(): React.ReactElement {
       pivot.rotation.x = -Math.PI / 2;
       scene.add(pivot);
 
+      // 材质可能被多个 mesh 共享，用 Set 去重后再交给面板
+      const panelMaterialSet = new Set<THREE.MeshStandardMaterial>();
+
       model.traverse((node) => {
         const mesh = node as THREE.Mesh;
         if (!mesh.isMesh) return;
@@ -151,14 +169,41 @@ export function GpuCard(): React.ReactElement {
         materials.forEach((material) => {
           const standard = material as THREE.MeshStandardMaterial;
           if (!standard.isMeshStandardMaterial) return;
-          standard.vertexColors = true;
-          standard.metalness = 0.45;
-          standard.roughness = 0.38;
-          standard.envMapIntensity = 1.1;
-          standard.side = THREE.FrontSide;
-          standard.needsUpdate = true;
+          // standard.vertexColors = true;
+          // standard.metalness = 0.45;
+          // standard.roughness = 0.38;
+          // standard.envMapIntensity = 1.1;
+          // standard.side = THREE.FrontSide;
+          // standard.needsUpdate = true;
+          panelMaterialSet.add(standard);
         });
       });
+
+      const panelMaterials = Array.from(panelMaterialSet);
+
+      // 右上角控制面板：Three.js 官方 lil-gui
+      const applyPosition = () => {
+        pivot.position.set(conf.x, conf.y, conf.z);
+      };
+
+      conf.reset = () => {
+        conf.color = DEFAULT_MODEL_COLOR;
+        conf.x = DEFAULT_POSITION.x;
+        conf.y = DEFAULT_POSITION.y;
+        conf.z = DEFAULT_POSITION.z;
+        panelMaterials.forEach((material) => material.color.set(conf.color));
+        applyPosition();
+        gui?.controllersRecursive().forEach((controller) => controller.updateDisplay());
+      };
+
+      gui = new GUI({ container: container!, title: "模型参数", width: 196 });
+      gui.addColor(conf, "color").name("颜色").onChange((value: string) => {
+        panelMaterials.forEach((material) => material.color.set(value));
+      });
+      gui.add(conf, "x", -3, 3, 0.05).name("X").onChange(applyPosition);
+      gui.add(conf, "y", -3, 3, 0.05).name("Y").onChange(applyPosition);
+      gui.add(conf, "z", -3, 3, 0.05).name("Z").onChange(applyPosition);
+      gui.add(conf, "reset").name("重置");
 
       // 5. 灯光 + 地面接影，让产品有落地的体积感
       const framedBounds = new THREE.Box3().setFromObject(pivot);
@@ -288,6 +333,7 @@ export function GpuCard(): React.ReactElement {
       mixer = undefined;
 
       controls?.dispose();
+      gui?.destroy();
 
       if (scene) {
         disposeObjectTree(scene);

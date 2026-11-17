@@ -182,3 +182,13 @@
     color: #d0021b;
   }
 }
+
+// ============ lil-gui 面板定位（右上角） ============
+// lil-gui 默认 fixed 贴视口右上角，这里改为相对场景容器定位，避免与其他示例的 GUI 重叠
+.three-scene-gpu-card .lil-gui.root {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  max-height: calc(100% - 40px);
+  overflow-y: auto;
+}
