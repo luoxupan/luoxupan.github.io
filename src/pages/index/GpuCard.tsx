@@ -9,7 +9,7 @@ import { SceneLoading } from "./SceneLoading";
 import './index.less';
 
 /** 显卡模型地址（放在 public/models/gltf 下，构建后按 BASE_URL 直接访问） */
-const MODEL_URL = `${import.meta.env.BASE_URL}models/gltf/gpu_card.glb`;
+const MODEL_URL = "https://luoxupan.github.io/big-file/glb/gpu_card.glb";
 /** GLB 内置的风扇旋转循环动画名，播放它风扇才会转动 */
 const FAN_ANIMATION_NAME = "GPU_Fans_Spin_Loop";
 /** 模型归一化后的最大边长，用于保证不同模型都能装进同一视角 */

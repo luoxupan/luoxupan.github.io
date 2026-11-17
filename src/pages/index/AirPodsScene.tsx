@@ -1,5 +1,7 @@
 import * as React from "react";
 import * as THREE from "three";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
@@ -9,7 +11,7 @@ import { SceneLoading } from "./SceneLoading";
 import './index.less';
 
 /** AirPods Max 模型地址（public/models/gltf 下，构建后按 BASE_URL 直接访问） */
-const MODEL_URL = `${import.meta.env.BASE_URL}models/gltf/Airpods-max.glb`;
+const MODEL_URL = "https://luoxupan.github.io/big-file/glb/Airpods-max-compress.glb";
 /** 归一化后的最大边长，保证模型能装进同一视角 */
 const TARGET_SIZE = 4;
 const BACKGROUND_COLOR = 0xf0f0f0;
@@ -36,6 +38,7 @@ export function AirPodsScene(): React.ReactElement {
     let model: THREE.Object3D | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let gui: GUI | undefined;
+    let dracoLoader: DRACOLoader | undefined;
     let keyLight: THREE.DirectionalLight | undefined;
     /** 初始取景，重置视角时回到这里 */
     let defaultView: { position: THREE.Vector3; target: THREE.Vector3 } | undefined;
@@ -138,16 +141,31 @@ export function AirPodsScene(): React.ReactElement {
       scene.environment = envRenderTarget.texture;
       pmremGenerator.dispose();
 
-      // 4. 加载模型（11MB，统一加载器给出下载进度）
+      // 4. 加载模型（Draco 压缩过的 glb，约 11MB 下载 + 解码，统一给出下载进度）
+      // 模型 extensionsRequired 里带着 KHR_draco_mesh_compression，不给 GLTFLoader
+      // 挂 DRACOLoader 会在解析阶段直接抛「no DRACOLoader instance provided」。
+      // 解码器自托管在 public/draco/gltf/，和 KiraScene / CharacterScene 共用同一份 wasm。
+      dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}draco/gltf/`);
+
+      const gltfLoader = new GLTFLoader();
+      gltfLoader.setDRACOLoader(dracoLoader);
+
       const gltf = await loadGLTF(MODEL_URL, {
+        loader: gltfLoader,
         onProgress: setProgress,
         isCancelled: () => cancelled,
       });
 
       if (cancelled) {
         disposeObjectTree(gltf.scene);
+        dracoLoader.dispose();
         return;
       }
+
+      // 解码完成后 wasm 解码器不再需要，提前释放，别一直占着线程池和显存
+      dracoLoader.dispose();
+      dracoLoader = undefined;
 
       // 5. 归一化：居中 + 缩放到统一尺寸
       model = gltf.scene;
@@ -349,6 +367,8 @@ export function AirPodsScene(): React.ReactElement {
 
       controls?.dispose();
       gui?.destroy();
+      dracoLoader?.dispose();
+      dracoLoader = undefined;
 
       if (scene) {
         disposeObjectTree(scene);

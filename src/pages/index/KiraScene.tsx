@@ -76,7 +76,7 @@ export function KiraScene(): React.ReactElement {
       const gltfLoader = new GLTFLoader();
       gltfLoader.setDRACOLoader(dracoLoader);
 
-      const gltf = await loadGLTF(`${import.meta.env.BASE_URL}models/gltf/kira.glb`, {
+      const gltf = await loadGLTF("https://luoxupan.github.io/big-file/glb/kira.glb", {
         loader: gltfLoader,
         onProgress: setProgress,
         isCancelled: () => cancelled,
