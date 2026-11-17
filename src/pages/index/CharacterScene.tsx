@@ -7,8 +7,8 @@ import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { createRenderer, disposeObjectTree, releaseRenderer } from "./webgl";
 import './index.less';
 
-/** 人物模型地址（public/models/gltf 下，构建后按 BASE_URL 直接访问） */
-const MODEL_URL = `${import.meta.env.BASE_URL}models/gltf/renwu.glb`;
+/** 人物模型地址（远程托管，避免大文件占用 GitHub 仓库） */
+const MODEL_URL = "https://luoxupan.github.io/big-file/glb/renwu.glb";
 /** 归一化后的最大边长，人物模型即身高 */
 const TARGET_SIZE = 3.2;
 const BACKGROUND_COLOR = 0xf0f0f0;

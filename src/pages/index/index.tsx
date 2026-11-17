@@ -3,8 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { GpuCard } from "./GpuCard";
 import { ChromeScene } from "./ChromeScene";
 import { KiraScene } from "./KiraScene";
-// import { DesertScene } from "./DesertScene";
-// import { CharacterScene } from "./CharacterScene";
+import { CharacterScene } from "./CharacterScene";
 import { AirPodsScene } from "./AirPodsScene";
 import "./index.less";
 
@@ -22,9 +21,8 @@ const IS_DEV = import.meta.env.DEV;
 
 /** 左侧列表的数据源：新增示例只需要在这里加一项 */
 const demos: Demo[] = [
-  // { key: "character-scene", label: "CharacterScene", description: "GLTF 人物模型（骨骼动画）", Component: CharacterScene },
+  { key: "character-scene", label: "CharacterScene", description: "GLTF 人物模型（骨骼动画）", Component: CharacterScene },
   { key: "airpods-scene", label: "AirPodsScene", description: "GLTF AirPods Max（产品展示）", Component: AirPodsScene },
-  // { key: "desert-scene", label: "DesertScene", description: "GLTF 沙漠场景模型（26MB）", Component: DesertScene },
   { key: "gpu-card", label: "GpuCard", description: "GPU 显卡 3D 模型（风扇动画）", Component: GpuCard },
   { key: "chrome-scene", label: "ChromeScene", description: "基础几何体 + 光照阴影", Component: ChromeScene, devOnly: true },
   { key: "kira-scene", label: "KiraScene", description: "GLTF 角色 IK 交互", Component: KiraScene, devOnly: true },
