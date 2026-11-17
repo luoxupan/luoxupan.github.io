@@ -12,6 +12,7 @@ import {
 import { JsonView } from './components/JsonView';
 import { EyeOutlined } from '@ant-design/icons';
 import { tempjson } from './temp';
+import { ExtNav } from 'components';
 
 export function TemplatePage(props: any) {
 
@@ -76,6 +77,7 @@ export function TemplatePage(props: any) {
       name="template"
       className='template-page'
     >
+      <ExtNav activeKey='template' />
       <div className='header-top'>
         <Button
           type='primary'

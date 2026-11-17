@@ -5,6 +5,7 @@ import { ChromeScene } from "./ChromeScene";
 import { KiraScene } from "./KiraScene";
 import { CharacterScene } from "./CharacterScene";
 import { AirPodsScene } from "./AirPodsScene";
+import { ExtNav } from "components";
 import "./index.less";
 
 type Demo = {
@@ -44,33 +45,38 @@ export function IndexPage(): React.ReactElement {
   const ActiveComponent = activeDemo.Component;
 
   return (
-    <div className="demo-layout">
-      <aside className="demo-layout__sidebar">
-        <div className="demo-layout__sidebar-title">示例列表</div>
-        <ul className="demo-layout__list">
-          {visibleDemos.map((demo) => (
-            <li key={demo.key} className="demo-layout__list-item">
-              <button
-                type="button"
-                className={
-                  demo.key === activeKey
-                    ? "demo-layout__item is-active"
-                    : "demo-layout__item"
-                }
-                onClick={() => setSearchParams({ [DEMO_PARAM]: demo.key })}
-              >
-                <span className="demo-layout__item-label">{demo.label}</span>
-                <span className="demo-layout__item-desc">{demo.description}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </aside>
+    <div className="demo-page">
+      {/* 当前页为 Three.js 作品集：该项高亮且不可点击 */}
+      <ExtNav activeKey="threejs" />
 
-      <main className="demo-layout__content">
-        {/* key 保证切换时重新挂载，让 3D 场景正确初始化/释放 */}
-        <ActiveComponent key={activeKey} />
-      </main>
+      <div className="demo-layout">
+        <aside className="demo-layout__sidebar">
+          <div className="demo-layout__sidebar-title">示例列表</div>
+          <ul className="demo-layout__list">
+            {visibleDemos.map((demo) => (
+              <li key={demo.key} className="demo-layout__list-item">
+                <button
+                  type="button"
+                  className={
+                    demo.key === activeKey
+                      ? "demo-layout__item is-active"
+                      : "demo-layout__item"
+                  }
+                  onClick={() => setSearchParams({ [DEMO_PARAM]: demo.key })}
+                >
+                  <span className="demo-layout__item-label">{demo.label}</span>
+                  <span className="demo-layout__item-desc">{demo.description}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        <main className="demo-layout__content">
+          {/* key 保证切换时重新挂载，让 3D 场景正确初始化/释放 */}
+          <ActiveComponent key={activeKey} />
+        </main>
+      </div>
     </div>
   );
 }

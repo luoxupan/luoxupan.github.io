@@ -11,10 +11,26 @@
 .template-page {
   background: #F4F6F8;
   overflow: hidden;
-  height: 99vh;
+  height: 100vh;
   padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+
+  // 顶部导航通栏：抵消页面左右 20px 内边距，让深色条顶到屏幕两侧
+  > .ext-nav {
+    margin: 0 -20px;
+  }
+
+  > .editor-contain {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+  }
+
   .header-top {
-    padding: 16px 2px;
+    flex: 0 0 auto;
+    // 顶部留出 24px，避免操作区紧贴导航条
+    padding: 24px 2px 16px;
     display: flex;
     align-items: center;
     justify-content: flex-start;

@@ -4,3 +4,4 @@ export * from './Options';
 export * from './Upload';
 export * from './SvgIcon';
 export * from './ErrorBoundary';
+export * from './ExtNav';
