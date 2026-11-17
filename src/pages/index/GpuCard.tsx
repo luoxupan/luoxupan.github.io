@@ -4,6 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
+import { createRenderer, disposeObjectTree, releaseRenderer } from "./webgl";
 import './index.less';
 
 /** 显卡模型地址（放在 public/models/gltf 下，构建后按 BASE_URL 直接访问） */
@@ -17,31 +18,6 @@ const BACKGROUND_COLOR = 0xf0f0f0;
 /** 控制面板默认值，重置时回到这里 */
 const DEFAULT_MODEL_COLOR = "#ffffff";
 const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
-
-/** 释放 GLTF 场景里的几何体、材质与贴图，避免切换页面时显存泄漏 */
-function disposeObjectTree(root: THREE.Object3D) {
-  root.traverse((child) => {
-    const mesh = child as THREE.Mesh;
-
-    if (mesh.geometry) {
-      mesh.geometry.dispose();
-    }
-
-    if (!mesh.material) return;
-
-    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-    materials.forEach((material) => {
-      const record = material as unknown as Record<string, unknown>;
-      Object.keys(record).forEach((key) => {
-        const value = record[key] as THREE.Texture;
-        if (value && typeof value === "object" && typeof value.dispose === "function" && value.isTexture) {
-          value.dispose();
-        }
-      });
-      material.dispose();
-    });
-  });
-}
 
 export function GpuCard(): React.ReactElement {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -112,7 +88,7 @@ export function GpuCard(): React.ReactElement {
       camera.position.set(0, 0, TARGET_SIZE * 1.6);
 
       // 3. 渲染器
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer = createRenderer({ antialias: true, alpha: false });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(width, height);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -322,7 +298,6 @@ export function GpuCard(): React.ReactElement {
     return () => {
       cancelled = true;
 
-      renderer?.setAnimationLoop(null);
       window.removeEventListener("resize", handleResize);
       resizeObserver?.disconnect();
 
@@ -340,20 +315,19 @@ export function GpuCard(): React.ReactElement {
       }
       envRenderTarget?.texture.dispose();
       envRenderTarget?.dispose();
-      renderer?.dispose();
-      renderer?.domElement.remove();
+      releaseRenderer(renderer);
     };
   }, []);
 
   return (
     <div className="three-scene-gpu-card" ref={containerRef}>
       {animationName && (
-        <div className="three-scene-gpu-card-badge">
+        <div className="three-scene-badge">
           <span className="dot" />
           {animationName}
         </div>
       )}
-      <div className="three-scene-gpu-card-hint">拖拽旋转 · 滚轮缩放</div>
+      <div className="three-scene-hint">拖拽旋转 · 滚轮缩放</div>
       {(isLoading || error) && (
         <div className={error ? "three-scene-status is-error" : "three-scene-status"}>
           {error || "正在加载 GPU 显卡模型..."}

@@ -1,10 +1,12 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { createRenderer, releaseRenderer } from "./webgl";
 import './index.less';
 
 export function ChromeScene(): React.ReactElement {
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const container = containerRef.current;
@@ -22,9 +24,14 @@ export function ChromeScene(): React.ReactElement {
     camera.position.set(100, 100, 100);
     camera.lookAt(0, 0, 0);
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-    });
+    // 渲染器创建失败（上下文数量超限 / 硬件加速被关）时给出提示，而不是整页崩掉
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = createRenderer({ antialias: true });
+    } catch (createError) {
+      setError(createError instanceof Error ? createError.message : "场景初始化失败");
+      return;
+    }
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -130,16 +137,18 @@ export function ChromeScene(): React.ReactElement {
     renderer.setAnimationLoop(animate);
 
     return () => {
-      renderer.setAnimationLoop(null);
       window.removeEventListener("resize", handleResize);
       resizeObserver.disconnect();
       controls.dispose();
       geometry.dispose();
       material.dispose();
-      renderer.dispose();
-      renderer.domElement.remove();
+      releaseRenderer(renderer);
     };
   }, []);
 
-  return <div className="three-scene" ref={containerRef} />;
+  return (
+    <div className="three-scene" ref={containerRef}>
+      {error && <div className="three-scene-status is-error">{error}</div>}
+    </div>
+  );
 }

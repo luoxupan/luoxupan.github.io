@@ -7,6 +7,7 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { CCDIKSolver, CCDIKHelper } from "three/examples/jsm/animation/CCDIKSolver.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
+import { createRenderer, disposeObjectTree, releaseRenderer } from "./webgl";
 import './index.less';
 
 type SceneObjects = {
@@ -18,29 +19,6 @@ type SceneObjects = {
   sphere?: THREE.Mesh;
   kira?: THREE.SkinnedMesh;
 };
-
-function disposeObjectTree(object: THREE.Object3D) {
-  object.traverse((child) => {
-    const mesh = child as THREE.Mesh;
-
-    if (mesh.geometry) {
-      mesh.geometry.dispose();
-    }
-
-    if (!mesh.material) return;
-
-    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-    materials.forEach((material) => {
-      Object.values(material).forEach((value) => {
-        const texture = value as THREE.Texture;
-        if (texture && typeof texture.dispose === "function") {
-          texture.dispose();
-        }
-      });
-      material.dispose();
-    });
-  });
-}
 
 export function KiraScene(): React.ReactElement {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -168,7 +146,7 @@ export function KiraScene(): React.ReactElement {
       gui.open();
       container.appendChild(gui.domElement);
 
-      renderer = new THREE.WebGLRenderer({
+      renderer = createRenderer({
         antialias: true,
       });
       renderer.setPixelRatio(window.devicePixelRatio);
@@ -202,7 +180,6 @@ export function KiraScene(): React.ReactElement {
       renderer.setAnimationLoop(animate);
 
       cleanupScene = () => {
-        renderer?.setAnimationLoop(null);
         window.removeEventListener("resize", handleResize);
         orbitControls?.dispose();
         transformControls?.dispose();
@@ -212,8 +189,7 @@ export function KiraScene(): React.ReactElement {
         dracoLoader?.dispose();
         gui?.destroy();
         stats?.dom.remove();
-        renderer?.dispose();
-        renderer?.domElement.remove();
+        releaseRenderer(renderer);
       };
     }
 

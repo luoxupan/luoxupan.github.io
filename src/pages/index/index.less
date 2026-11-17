@@ -113,7 +113,7 @@
   }
 }
 
-.three-scene-gpu-card-badge {
+.three-scene-badge {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -152,7 +152,7 @@
   }
 }
 
-.three-scene-gpu-card-hint {
+.three-scene-hint {
   position: absolute;
   left: 50%;
   bottom: 22px;
@@ -175,8 +175,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #333;
+  padding: 0 20px;
+  color: rgba(0, 0, 0, 0.65);
   font-size: 14px;
+  text-align: center;
 
   &.is-error {
     color: #d0021b;
@@ -185,7 +187,12 @@
 
 // ============ lil-gui 面板定位（右上角） ============
 // lil-gui 默认 fixed 贴视口右上角，这里改为相对场景容器定位，避免与其他示例的 GUI 重叠
-.three-scene-gpu-card .lil-gui.root {
+.three-scene-gpu-card .lil-gui.root,
+.three-scene-desert .lil-gui.root,
+.three-scene-character .lil-gui.root,
+.three-scene-riman .lil-gui.root,
+.three-scene-airpods .lil-gui.root,
+.three-scene-iphone .lil-gui.root {
   position: absolute;
   top: 20px;
   right: 20px;
